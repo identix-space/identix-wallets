@@ -1,9 +1,9 @@
 version: '3.8'
 services:
-  nest-js-graphql-api:
-    container_name: 'nest-js-graphql-api'
-    image: 'nest-js-graphql-postgres'
-    hostname: nest-js-graphql-api
+  identix-wallets-api:
+    container_name: 'identix-wallets'
+    image: 'identix-wallets'
+    hostname: identix-wallets
     networks:
       - app-local-net
     volumes:

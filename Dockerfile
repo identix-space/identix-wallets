@@ -8,7 +8,7 @@ COPY yarn.lock ./yarn.lock
 RUN yarn install
 
 COPY src ./src
-COPY assets ./assets
+COPY .secrets ./.secrets
 COPY tsconfig.json ./tsconfig.json
 COPY tsconfig.build.json ./tsconfig.build.json
 COPY tsconfig.spec.json ./tsconfig.spec.json
@@ -18,4 +18,4 @@ COPY nest-cli.json ./nest-cli.json
 COPY .eslintrc.json ./.eslintrc.json
 COPY ormconfig.js ./ormconfig.js
 
-RUN yarn build --production
+RUN yarn build
