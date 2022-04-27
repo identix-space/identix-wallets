@@ -11,7 +11,8 @@ services:
 
   identix-wallets-api:
     container_name: 'identix-wallets'
-    depends_on: identix-wallets-migrations
+    depends_on:
+      - identix-wallets-migrations
     image: 'identix-wallets'
     hostname: identix-wallets
     networks:
@@ -29,4 +30,4 @@ networks:
   app-local-net:
     external: false
     driver: bridge
-    name: app-local-net
+    name: app-local-net:qq
