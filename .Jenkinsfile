@@ -48,7 +48,6 @@ pipeline {
                         sh('''#!/bin/bash
                           echo Branch Name: $BRANCH_NAME
                           cd /var/www/identix-wallets/$BRANCH_NAME
-                          docker-compose build
                           docker-compose run identix-web-backend yarn typeorm:run 
                         ''')
                     }
