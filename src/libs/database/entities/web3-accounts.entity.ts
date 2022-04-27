@@ -52,7 +52,7 @@ export class Web3AccountsEntity {
     name: "address",
     type: "varchar",
     length: 1024,
-    nullable: true
+    nullable: false
   })
   @Field({ nullable: false })
   public address: string;

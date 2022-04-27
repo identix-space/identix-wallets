@@ -33,13 +33,13 @@ export class Web2AccountsEntity {
   public authMethod: Web2AuthenticationMethods;
 
   @Column({
-    name: "accountId",
+    name: "authIdentifier",
     type: "varchar",
     length: 1024,
     nullable: false
   })
   @Field({ nullable: false })
-  public accountId: string;
+  public authIdentifier: string;
 
   @Column({
     name: "createdAt",
