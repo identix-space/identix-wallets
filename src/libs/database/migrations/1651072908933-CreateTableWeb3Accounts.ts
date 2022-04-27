@@ -4,8 +4,8 @@ export class CreateTableWeb3Accounts1651072908933 implements MigrationInterface 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TYPE "blockchains_list" AS ENUM(
-          'POLYGON',
-          'EVERSCALE'
+          'polygon',
+          'everscale'
         )
       `);
 
@@ -29,7 +29,8 @@ export class CreateTableWeb3Accounts1651072908933 implements MigrationInterface 
           new TableColumn({
             name: 'blockchain',
             type: 'blockchains_list',
-            isNullable: false,
+            isNullable: true,
+            default: 'NULL',
           }),
           new TableColumn({
             name: "publicKey",
@@ -47,7 +48,8 @@ export class CreateTableWeb3Accounts1651072908933 implements MigrationInterface 
             name: "address",
             type: "varchar",
             length: "1024",
-            isNullable: false,
+            isNullable: true,
+            default: 'NULL',
           }),
           new TableColumn({
             name: "createdAt",

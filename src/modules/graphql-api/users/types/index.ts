@@ -41,6 +41,6 @@ export class TAccountGetOrCreate  {
 
 @ObjectType()
 export class TGetOrCreateAccountResult {
-  @Field(type => String)
-  did: string;
+  @Field(type => [String])
+  dids: string[];
 }

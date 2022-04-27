@@ -52,19 +52,19 @@ export class Web3AccountsEntity {
     name: "address",
     type: "varchar",
     length: 1024,
-    nullable: false
+    nullable: true
   })
-  @Field({ nullable: false })
-  public address: string;
+  @Field({ nullable: true })
+  public address?: string;
 
   @Column({
     name: "blockchain",
     type: "enum",
     enum: Blockchains,
-    nullable: false
+    nullable: true
   })
-  @Field({ nullable: false })
-  public blockchain: Blockchains;
+  @Field({ nullable: true })
+  public blockchain?: Blockchains;
 
   @Column({
     name: "createdAt",

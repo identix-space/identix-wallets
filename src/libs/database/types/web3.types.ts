@@ -1,4 +1,4 @@
 export enum Blockchains {
-  polygon = 'POLYGON',
-  everscale = 'EVERSCALE'
+  polygon = 'polygon',
+  everscale = 'everscale'
 }
