@@ -13,10 +13,10 @@ export class VcStorageGraphqlApiResolvers {
   @Mutation(returns => VcStorageEntity)
   async createVC(
     @Args("vcData", { type: () => String }) vcData: string,
-    @Args("issuer", { type: () => String }) issuer?: string,
-    @Args("holder", { type: () => String }) holder?: string,
-    @Args("verifier", { type: () => String }) verifier?: string,
-    @Args("status", { type: () => String }) status?: string
+    @Args("issuer", { type: () => String }) issuer?: string | undefined,
+    @Args("holder", { type: () => String }) holder?: string | undefined,
+    @Args("verifier", { type: () => String }) verifier?: string | undefined,
+    @Args("status", { type: () => String }) status?: string | undefined
   ) {
     return this.vcStorageService.create({ vcData, issuer, holder, verifier, status} as TVCStorageCreate);
   }

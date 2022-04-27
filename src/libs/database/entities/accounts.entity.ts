@@ -47,21 +47,18 @@ export class AccountsEntity {
     () => VcStorageEntity,
     vc => vc.issuer,
   )
-  @Field(type => [VcStorageEntity])
   public issuerVCs: VcStorageEntity[]
 
   @OneToMany(
     () => VcStorageEntity,
     vc => vc.holder,
   )
-  @Field(type => [VcStorageEntity])
   public holderVCs: VcStorageEntity[]
 
   @OneToMany(
     () => VcStorageEntity,
     vc => vc.verifier,
   )
-  @Field(type => [VcStorageEntity])
   public verifierVCs: VcStorageEntity[]
 }
 

@@ -1,9 +1,10 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import { Field, Int } from "@nestjs/graphql";
+import {Field, Int, ObjectType} from "@nestjs/graphql";
 import {AccountsEntity} from "./accounts.entity";
 import {VcStatusType} from "@/libs/database/types/vc-status.type";
 
 @Entity("vc-storage")
+@ObjectType()
 export class VcStorageEntity {
   @PrimaryGeneratedColumn()
   @Field(type => Int)
@@ -45,7 +46,7 @@ export class VcStorageEntity {
     enum: VcStatusType,
     nullable: false
   })
-  @Field(type => VcStatusType, { nullable: false })
+  @Field(type => String, { nullable: false })
   public status: VcStatusType;
 
   @Column({

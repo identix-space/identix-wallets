@@ -24,6 +24,12 @@ export class CreateTableVcStorage1651032810801 implements MigrationInterface {
             generationStrategy: "increment"
           }),
           new TableColumn({
+            name: "vcData",
+            type: "varchar",
+            length: "1024",
+            isNullable: false
+          }),
+          new TableColumn({
             name: 'issuerId',
             type: 'int',
             isNullable: true,

@@ -16,6 +16,7 @@ export class VcStorageGraphqlApiService {
 
   async create(data: TVCStorageCreate): Promise<VcStorageEntity> {
     const vc = new VcStorageEntity();
+    vc.vcData = data.vcData;
 
     await this.vcStorageRepository.save(vc);
 
