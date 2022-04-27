@@ -30,4 +30,3 @@ networks:
     external: false
     driver: bridge
     name: app-local-net
-Ж
