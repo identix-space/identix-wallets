@@ -2,9 +2,12 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
+  OneToMany,
   UpdateDateColumn
 } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { VcStorageEntity } from "@/libs/database/entities/vc-storage.entity";
+
 
 @Entity("accounts")
 @ObjectType()
@@ -23,14 +26,6 @@ export class AccountsEntity {
   public did: string;
 
   @Column({
-    name: "lastActivity",
-    type: "timestamp",
-    nullable: false
-  })
-  @Field({ nullable: false })
-  public lastActivity: Date;
-
-  @Column({
     name: "createdAt",
     type: "timestamp",
     nullable: true,
@@ -47,11 +42,32 @@ export class AccountsEntity {
   })
   @Field({ nullable: false })
   public updatedAt: Date;
+
+  @OneToMany(
+    () => VcStorageEntity,
+    vc => vc.issuer,
+  )
+  @Field(type => [VcStorageEntity])
+  public issuerVCs: VcStorageEntity[]
+
+  @OneToMany(
+    () => VcStorageEntity,
+    vc => vc.holder,
+  )
+  @Field(type => [VcStorageEntity])
+  public holderVCs: VcStorageEntity[]
+
+  @OneToMany(
+    () => VcStorageEntity,
+    vc => vc.verifier,
+  )
+  @Field(type => [VcStorageEntity])
+  public verifierVCs: VcStorageEntity[]
 }
 
-export class UsersListSearchResult {
+export class AccountsListResult {
   @Field(type => [AccountsEntity])
-  public users: AccountsEntity[];
+  public accounts: AccountsEntity[];
 
   @Field(type => Int)
   public total: number;

@@ -1,27 +1,33 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { VCStorageEntity } from "@/libs/database/entities";
-import { AccountsGraphqlApiService } from "@/modules/graphql-api/accounts/services/accounts.graphql-api.service";
+import { VcStorageEntity } from "@/libs/database/entities";
 import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
+import {VcStorageGraphqlApiService} from "@/modules/graphql-api/vc-storage/services/vc-storage.graphql-api.service";
 
 @UseGuards(SsoAuthGuard)
-@Resolver(of => VCStorageEntity)
+@Resolver(of => VcStorageEntity)
 export class VcStorageGraphqlApiResolvers {
-  constructor(private usersService: AccountsGraphqlApiService) {}
+  constructor(private vcStorageService: VcStorageGraphqlApiService) {}
 
-  @Mutation(returns => VCStorageEntity)
-  async createUser(@Args("did", { type: () => String }) did: string) {
-    return this.usersService.create({ did } as TVCStorageCreate);
+  @Mutation(returns => VcStorageEntity)
+  async createVC(
+    @Args("vcData", { type: () => String }) vcData: string,
+    @Args("issuer", { type: () => String }) issuer?: string,
+    @Args("holder", { type: () => String }) holder?: string,
+    @Args("verifier", { type: () => String }) verifier?: string,
+    @Args("status", { type: () => String }) status?: string
+  ) {
+    return this.vcStorageService.create({ vcData, issuer, holder, verifier, status} as TVCStorageCreate);
   }
 
-  @Query(returns => VCStorageEntity)
-  async getUser(@Args("id", { type: () => Int }) id: number) {
-    return this.usersService.findById(id);
+  @Query(returns => VcStorageEntity)
+  async getVC(@Args("id", { type: () => Int }) id: number) {
+    return this.vcStorageService.findById(id);
   }
 
   @Mutation(returns => Boolean)
-  async deleteUser(@Args("id", { type: () => Int }) id: number) {
-    return this.usersService.deleteById(id);
+  async deleteVC(@Args("id", { type: () => Int }) id: number) {
+    return this.vcStorageService.deleteById(id);
   }
 }
