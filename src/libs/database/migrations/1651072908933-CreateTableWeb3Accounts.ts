@@ -1,19 +1,17 @@
 import { MigrationInterface, QueryRunner, TableColumn, Table, TableForeignKey } from "typeorm";
 
-export class CreateTableVcStorage1651032810801 implements MigrationInterface {
+export class CreateTableWeb3Accounts1651072908933 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TYPE "vc_statuses" AS ENUM(
-          'PENDING_VERIFY_REQUEST',
-          'PENDING_VERIFY',
-          'ACCEPTED',
-          'REJECTED'
+      CREATE TYPE "blockchains_list" AS ENUM(
+          'polygon',
+          'everscale'
         )
       `);
 
     await queryRunner.createTable(
       new Table({
-        name: "vc-storage",
+        name: "web3-accounts",
         columns: [
           new TableColumn({
             name: "id",
@@ -24,29 +22,32 @@ export class CreateTableVcStorage1651032810801 implements MigrationInterface {
             generationStrategy: "increment"
           }),
           new TableColumn({
-            name: "vcData",
+            name: 'userId',
+            type: 'int',
+            isNullable: false,
+          }),
+          new TableColumn({
+            name: 'blockchain',
+            type: 'blockchains_list',
+            isNullable: true,
+            default: 'NULL',
+          }),
+          new TableColumn({
+            name: "publicKey",
             type: "varchar",
             length: "1024",
             isNullable: false
           }),
           new TableColumn({
-            name: 'issuerId',
-            type: 'int',
-            isNullable: true,
+            name: "privateKey",
+            type: "varchar",
+            length: "1024",
+            isNullable: false
           }),
           new TableColumn({
-            name: 'holderId',
-            type: 'int',
-            isNullable: true,
-          }),
-          new TableColumn({
-            name: 'verifierId',
-            type: 'int',
-            isNullable: true,
-          }),
-          new TableColumn({
-            name: 'status',
-            type: 'vc_statuses',
+            name: "address",
+            type: "varchar",
+            length: "1024",
             isNullable: true,
             default: 'NULL',
           }),
@@ -67,17 +68,7 @@ export class CreateTableVcStorage1651032810801 implements MigrationInterface {
           new TableForeignKey({
             referencedTableName: 'users',
             referencedColumnNames: ['id'],
-            columnNames: ['issuerId'],
-          }),
-          new TableForeignKey({
-            referencedTableName: 'users',
-            referencedColumnNames: ['id'],
-            columnNames: ['holderId'],
-          }),
-          new TableForeignKey({
-            referencedTableName: 'users',
-            referencedColumnNames: ['id'],
-            columnNames: ['verifierId'],
+            columnNames: ['userId'],
           }),
         ],
       })
@@ -85,6 +76,7 @@ export class CreateTableVcStorage1651032810801 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable("vc-storage");
+    await queryRunner.dropTable("web3-accounts");
   }
 }
+

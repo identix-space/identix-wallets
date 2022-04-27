@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner, TableColumn, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn, Table, TableForeignKey } from "typeorm";
 
-export class CreateTableAccounts1629793100105 implements MigrationInterface {
+export class CreateTableDids1651072920444 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: "accounts",
+        name: "dids",
         columns: [
           new TableColumn({
             name: "id",
@@ -18,8 +18,12 @@ export class CreateTableAccounts1629793100105 implements MigrationInterface {
             name: "did",
             type: "varchar",
             length: "1024",
+            isNullable: false
+          }),
+          new TableColumn({
+            name: 'web3AccountId',
+            type: 'int',
             isNullable: false,
-            isUnique: true
           }),
           new TableColumn({
             name: "createdAt",
@@ -33,12 +37,20 @@ export class CreateTableAccounts1629793100105 implements MigrationInterface {
             isNullable: true,
             default: "CURRENT_TIMESTAMP"
           })
-        ]
+        ],
+        foreignKeys: [
+          new TableForeignKey({
+            referencedTableName: 'web3-accounts',
+            referencedColumnNames: ['id'],
+            columnNames: ['web3AccountId'],
+          }),
+        ],
       })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable("accounts");
+    await queryRunner.dropTable("web3-accounts");
   }
 }
+

@@ -1,6 +1,6 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Field, Int, ObjectType} from "@nestjs/graphql";
-import {AccountsEntity} from "./accounts.entity";
+import {UsersEntity} from "./users.entity";
 import {VcStatusType} from "@/libs/database/types/vc-status.type";
 
 @Entity("vc-storage")
@@ -20,25 +20,25 @@ export class VcStorageEntity {
   public vcData: string;
 
   @ManyToOne(
-    () => AccountsEntity,
+    () => UsersEntity,
     account => account.issuerVCs,
   )
-  @Field(type => AccountsEntity)
-  public issuer: AccountsEntity;
+  @Field(type => UsersEntity)
+  public issuer: UsersEntity;
 
   @ManyToOne(
-    () => AccountsEntity,
+    () => UsersEntity,
     account => account.holderVCs,
   )
-  @Field(type => AccountsEntity)
-  public holder: AccountsEntity;
+  @Field(type => UsersEntity)
+  public holder: UsersEntity;
 
   @ManyToOne(
-    () => AccountsEntity,
+    () => UsersEntity,
     account => account.verifierVCs,
   )
-  @Field(type => AccountsEntity)
-  public verifier: AccountsEntity;
+  @Field(type => UsersEntity)
+  public verifier: UsersEntity;
 
   @Column({
     name: "status",

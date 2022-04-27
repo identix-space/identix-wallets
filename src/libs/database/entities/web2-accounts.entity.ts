@@ -3,27 +3,43 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   OneToMany,
-  UpdateDateColumn
+  UpdateDateColumn, ManyToOne
 } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { VcStorageEntity } from "@/libs/database/entities/vc-storage.entity";
+import { UsersEntity } from "@/libs/database/entities/users.entity";
+import { Web2AuthenticationMethods } from "@/libs/database/types/web2.types";
 
-
-@Entity("accounts")
+@Entity("web2-accounts")
 @ObjectType()
-export class AccountsEntity {
+export class Web2AccountsEntity {
   @PrimaryGeneratedColumn()
   @Field(type => Int)
   id: number;
 
+  @ManyToOne(
+    () => UsersEntity,
+    user => user.web2Accounts,
+  )
+  @Field(type => UsersEntity)
+  public user: UsersEntity;
+
   @Column({
-    name: "did",
+    name: "authMethod",
+    type: "enum",
+    enum: Web2AuthenticationMethods,
+    nullable: false
+  })
+  @Field({ nullable: false })
+  public authMethod: Web2AuthenticationMethods;
+
+  @Column({
+    name: "authIdentifier",
     type: "varchar",
     length: 1024,
     nullable: false
   })
   @Field({ nullable: false })
-  public did: string;
+  public authIdentifier: string;
 
   @Column({
     name: "createdAt",
@@ -42,30 +58,4 @@ export class AccountsEntity {
   })
   @Field({ nullable: false })
   public updatedAt: Date;
-
-  @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.issuer,
-  )
-  public issuerVCs: VcStorageEntity[]
-
-  @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.holder,
-  )
-  public holderVCs: VcStorageEntity[]
-
-  @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.verifier,
-  )
-  public verifierVCs: VcStorageEntity[]
-}
-
-export class AccountsListResult {
-  @Field(type => [AccountsEntity])
-  public accounts: AccountsEntity[];
-
-  @Field(type => Int)
-  public total: number;
 }

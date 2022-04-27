@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { AccountsEntity, VcStorageEntity } from "@/libs/database/entities";
+import { UsersEntity, VcStorageEntity } from "@/libs/database/entities";
 import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
 
 @Injectable()
@@ -10,8 +10,8 @@ export class VcStorageGraphqlApiService {
   constructor(
     @InjectRepository(VcStorageEntity)
     private vcStorageRepository: Repository<VcStorageEntity>,
-    @InjectRepository(AccountsEntity)
-    private accountsRepository: Repository<AccountsEntity>
+    @InjectRepository(UsersEntity)
+    private accountsRepository: Repository<UsersEntity>
   ) {}
 
   async create(data: TVCStorageCreate): Promise<VcStorageEntity> {
