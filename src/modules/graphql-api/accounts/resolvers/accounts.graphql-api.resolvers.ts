@@ -1,21 +1,21 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { AccountsEntity } from "@/libs/database/entities";
+import { UsersEntity } from "@/libs/database/entities";
 import { AccountsGraphqlApiService } from "@/modules/graphql-api/accounts/services/accounts.graphql-api.service";
 import { TAccountCreate } from "@/modules/graphql-api/accounts/types";
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 
 @UseGuards(SsoAuthGuard)
-@Resolver(of => AccountsEntity)
+@Resolver(of => UsersEntity)
 export class AccountsGraphqlApiResolvers {
   constructor(private usersService: AccountsGraphqlApiService) {}
 
-  @Mutation(returns => AccountsEntity)
+  @Mutation(returns => UsersEntity)
   async createAccount(@Args("did", { type: () => String }) did: string) {
     return this.usersService.create({ did } as TAccountCreate);
   }
 
-  @Query(returns => AccountsEntity)
+  @Query(returns => UsersEntity)
   async getAccount(@Args("id", { type: () => Int }) id: number) {
     return this.usersService.findById(id);
   }

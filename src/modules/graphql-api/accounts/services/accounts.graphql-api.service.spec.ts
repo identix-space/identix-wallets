@@ -2,13 +2,13 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { AccountsEntity } from "@/libs/database/entities";
+import { UsersEntity } from "@/libs/database/entities";
 import { AccountsGraphqlApiService } from "./accounts.graphql-api.service";
 
 describe("AccountsService", () => {
   let service: AccountsGraphqlApiService;
-  let accountsRepositoryMock: Repository<AccountsEntity>;
-  const accountsRepositoryToken = getRepositoryToken(AccountsEntity);
+  let accountsRepositoryMock: Repository<UsersEntity>;
+  const accountsRepositoryToken = getRepositoryToken(UsersEntity);
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -52,7 +52,7 @@ describe("AccountsService", () => {
     });
 
     it("user exists: should be trow error", async () => {
-      const user = new AccountsEntity();
+      const user = new UsersEntity();
       jest.spyOn(accountsRepositoryMock, "findOne").mockImplementation(() => {
         return new Promise(resolve => resolve(user));
       });
@@ -71,7 +71,7 @@ describe("AccountsService", () => {
     it("user not exists: should be create user", async () => {
       const did = "test:did:123";
 
-      const user = new AccountsEntity();
+      const user = new UsersEntity();
       user.did = did;
 
       jest.spyOn(accountsRepositoryMock, "findOne").mockImplementation(() => {

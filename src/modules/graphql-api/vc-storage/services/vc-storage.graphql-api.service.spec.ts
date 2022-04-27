@@ -2,13 +2,13 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { AccountsEntity, VcStorageEntity } from "@/libs/database/entities";
+import { UsersEntity, VcStorageEntity } from "@/libs/database/entities";
 import { VcStorageGraphqlApiService } from "./vc-storage.graphql-api.service";
 
 describe("VcStorageService", () => {
   let service: VcStorageGraphqlApiService;
-  let accountsRepositoryMock: Repository<AccountsEntity>;
-  const accountsRepositoryToken = getRepositoryToken(AccountsEntity);
+  let accountsRepositoryMock: Repository<UsersEntity>;
+  const accountsRepositoryToken = getRepositoryToken(UsersEntity);
   let vcStorageRepositoryMock: Repository<VcStorageEntity>;
   const vcStorageRepositoryToken = getRepositoryToken(VcStorageEntity);
 

@@ -2,17 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { AccountsEntity } from "@/libs/database/entities";
+import { UsersEntity } from "@/libs/database/entities";
 import { TAccountCreate } from "@/modules/graphql-api/accounts/types";
 
 @Injectable()
 export class AccountsGraphqlApiService {
   constructor(
-    @InjectRepository(AccountsEntity)
-    private accountsRepository: Repository<AccountsEntity>
+    @InjectRepository(UsersEntity)
+    private accountsRepository: Repository<UsersEntity>
   ) {}
 
-  async create(data: TAccountCreate): Promise<AccountsEntity> {
+  async create(data: TAccountCreate): Promise<UsersEntity> {
     const { did, lastActive } = data;
 
     if (!did) {
@@ -24,7 +24,7 @@ export class AccountsGraphqlApiService {
       throw new Error("Account already exists");
     }
 
-    account = new AccountsEntity();
+    account = new UsersEntity();
     account.did = did;
 
     await this.accountsRepository.save(account);
@@ -32,11 +32,11 @@ export class AccountsGraphqlApiService {
     return account;
   }
 
-  async findById(id: number): Promise<AccountsEntity> {
+  async findById(id: number): Promise<UsersEntity> {
     return this.accountsRepository.findOne(id);
   }
 
-  async findByDid(did: string): Promise<AccountsEntity> {
+  async findByDid(did: string): Promise<UsersEntity> {
     return this.accountsRepository.findOne({ did });
   }
 
