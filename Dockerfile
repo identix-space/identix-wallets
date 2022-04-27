@@ -19,3 +19,5 @@ COPY .eslintrc.json ./.eslintrc.json
 COPY ormconfig.js ./ormconfig.js
 
 RUN yarn build
+
+CMD ["yarn","start"]
