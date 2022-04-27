@@ -24,7 +24,7 @@ export class CreateTableVcStorage1651032810801 implements MigrationInterface {
             generationStrategy: "increment"
           }),
           new TableColumn({
-            name: 'issueId',
+            name: 'issuerId',
             type: 'int',
             isNullable: true,
           }),
