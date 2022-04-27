@@ -1,7 +1,17 @@
 version: '3.8'
 services:
+  identix-wallets-migrations:
+    container_name: 'identix-wallets-migrations'
+    image: 'identix-wallets'
+    networks:
+      - app-local-net
+    volumes:
+      - ../../.env:/usr/src/app/.env
+    command: [ "yarn", "typeorm:run" ]
+
   identix-wallets-api:
     container_name: 'identix-wallets'
+    depends_on: identix-wallets-migrations
     image: 'identix-wallets'
     hostname: identix-wallets
     networks:
@@ -9,7 +19,7 @@ services:
     volumes:
       - ../../.env:/usr/src/app/.env
     environment:
-      - HTTP_PORT=${BACKEND_HTTP_API_PORT}
+      - HTTP_PORT=3000
     ports:
       - "9000:3000"
     command: [ "yarn", "start" ]
@@ -20,3 +30,4 @@ networks:
     external: false
     driver: bridge
     name: app-local-net
+Ж

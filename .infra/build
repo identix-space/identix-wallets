@@ -12,7 +12,7 @@ if [[ "${1}" == "--help" ]]; then
    help
 fi
 
-imageName=nest-js-graphql-postgres
+imageName=identix-wallets
 if [[ ! -z "$1" ]]; then
   imageName=$1
 fi
