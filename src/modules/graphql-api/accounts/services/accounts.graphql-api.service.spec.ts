@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { AccountsEntity } from "@/libs/database/entities";
 import { AccountsGraphqlApiService } from "./accounts.graphql-api.service";
 
-describe("UsersService", () => {
+describe("AccountsService", () => {
   let service: AccountsGraphqlApiService;
   let accountsRepositoryMock: Repository<AccountsEntity>;
   const accountsRepositoryToken = getRepositoryToken(AccountsEntity);

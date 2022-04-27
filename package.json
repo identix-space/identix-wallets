@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "start:grapql": "ts-node -r tsconfig-paths/register ./src/applications/graphql-api/main.ts",
+    "start": "ts-node -r tsconfig-paths/register ./src/applications/graphql-api/main.ts",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint ",
     "typeorm": "ts-node -r tsconfig-paths/register --project tsconfig.json ./node_modules/typeorm/cli.js --config ormconfig.js",
