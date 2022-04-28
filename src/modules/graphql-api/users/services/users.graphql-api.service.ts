@@ -22,7 +22,7 @@ export class UsersGraphqlApiService {
   ) {}
 
   async getOrCreateAccount(params: TAccountGetOrCreate): Promise<TGetOrCreateAccountResult> {
-    const { nickname, web2, web3 } = params;
+    const { web2, web3 } = params;
 
     if (!web2 && !web3) {
       throw new BadRequestException('Either web2 or web3 parameters are required');
@@ -120,11 +120,9 @@ export class UsersGraphqlApiService {
       web3Account: Web3AccountsEntity,
       didEntity: DidsEntity
   }> {
-    const { nickname, web2, web3 } = params;
+    const { web2, web3 } = params;
 
     const user = new UsersEntity();
-    user.nickname = nickname;
-
     await this.usersRepository.save(user);
 
     let web2Account;
@@ -163,6 +161,9 @@ export class UsersGraphqlApiService {
     didEntity.web3Account = web3Account;
     didEntity.did = did;
     await this.didsRepository.save(didEntity);
+
+    user.nickname = did;
+    await this.usersRepository.save(user);
 
     return { user, web2Account, web3Account, didEntity };
   }
