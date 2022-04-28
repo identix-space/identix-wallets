@@ -75,7 +75,7 @@ describe("UsersService", () => {
     it("email is undefined: should trow error", async () => {
       let result;
       try {
-        result = await service.getOrCreateAccount({nickname: 'test.user'});
+        result = await service.getOrCreateAccount({});
       } catch (error) {
         expect(error).toBeDefined();
         expect(error.message).toBe("Either web2 or web3 parameters are required");
