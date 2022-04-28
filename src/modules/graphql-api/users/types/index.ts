@@ -23,9 +23,6 @@ class Web3AccountParams {
 @ObjectType()
 @InputType()
 export class TAccountGetOrCreate  {
-  @Field(type => String, { nullable: true })
-  nickname?: string;
-
   @Field(type => Web2AccountParams, { nullable: true })
   web2?: {
     method: Web2AuthenticationMethods;
