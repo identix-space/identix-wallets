@@ -4,7 +4,7 @@ import {Field, InputType, ObjectType} from "@nestjs/graphql";
 
 @InputType()
 class Web2AccountParams {
-  @Field(type => String)
+  @Field(type => Web2AuthenticationMethods)
   method: Web2AuthenticationMethods;
 
   @Field(type => String)
@@ -13,7 +13,7 @@ class Web2AccountParams {
 
 @InputType()
 class Web3AccountParams {
-  @Field(type => String)
+  @Field(type => Blockchains)
   blockchain: Blockchains;
 
   @Field(type => String)
