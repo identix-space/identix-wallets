@@ -2,33 +2,44 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  OneToMany,
+  UpdateDateColumn, ManyToOne
 } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { UsersEntity } from "@/libs/database/entities/users.entity";
+import { Web2AuthenticationMethods } from "@/libs/database/types/web2.types";
 
-@Entity("accounts")
+@Entity("web2-accounts")
 @ObjectType()
-export class AccountsEntity {
+export class Web2AccountsEntity {
   @PrimaryGeneratedColumn()
   @Field(type => Int)
   id: number;
 
+  @ManyToOne(
+    () => UsersEntity,
+    user => user.web2Accounts,
+  )
+  @Field(type => UsersEntity)
+  public user: UsersEntity;
+
   @Column({
-    name: "did",
+    name: "authMethod",
+    type: "enum",
+    enum: Web2AuthenticationMethods,
+    nullable: false
+  })
+  @Field({ nullable: false })
+  public authMethod: Web2AuthenticationMethods;
+
+  @Column({
+    name: "authIdentifier",
     type: "varchar",
     length: 1024,
     nullable: false
   })
   @Field({ nullable: false })
-  public did: string;
-
-  @Column({
-    name: "lastActivity",
-    type: "timestamp",
-    nullable: false
-  })
-  @Field({ nullable: false })
-  public lastActivity: Date;
+  public authIdentifier: string;
 
   @Column({
     name: "createdAt",
@@ -47,12 +58,4 @@ export class AccountsEntity {
   })
   @Field({ nullable: false })
   public updatedAt: Date;
-}
-
-export class UsersListSearchResult {
-  @Field(type => [AccountsEntity])
-  public users: AccountsEntity[];
-
-  @Field(type => Int)
-  public total: number;
 }
