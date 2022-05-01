@@ -1,8 +1,9 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Field, Int, ObjectType} from "@nestjs/graphql";
 import {UsersEntity} from "./users.entity";
-import {VcStatusType} from "@/libs/database/types/vc-status.type";
+import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 import {VcStorageEntity} from "@/libs/database/entities/vc-storage.entity";
+import {alias} from "yargs";
 
 @Entity("vc-verifier-cases")
 @ObjectType()
@@ -23,11 +24,11 @@ export class VcVerificationCasesEntity {
   @Column({
     name: "verificationStatus",
     type: "enum",
-    enum: VcStatusType,
+    enum: VcVerificationStatusType,
     nullable: false
   })
   @Field({ nullable: false })
-  public verificationStatus: string;
+  public verificationStatus: VcVerificationStatusType;
 
   @ManyToOne(
     () => VcStorageEntity,

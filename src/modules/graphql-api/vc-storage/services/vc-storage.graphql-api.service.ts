@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Did } from "@/libs/common/types/ssi.types";
+import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
+import {Did} from "@/libs/common/types/ssi.types";
 import {UsersEntity, VcStorageEntity, VcVerificationCasesEntity} from "@/libs/database/entities";
-import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
+import {TVCStorageCreate} from "@/modules/graphql-api/vc-storage/types";
+import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 
 @Injectable()
 export class VcStorageGraphqlApiService {
@@ -16,7 +17,7 @@ export class VcStorageGraphqlApiService {
     private accountsRepository: Repository<UsersEntity>
   ) {}
 
-  async create(params: TVCStorageCreate): Promise<VcStorageEntity> {
+  async createVC(params: TVCStorageCreate): Promise<VcStorageEntity> {
     const { vcDid, vcData, issuerDid, holderDid} = params;
 
     const vc = new VcStorageEntity();
@@ -90,5 +91,50 @@ export class VcStorageGraphqlApiService {
 
   async deleteVcById(id: number): Promise<boolean> {
     return !!(await this.vcStorageRepository.delete({ id }));
+  }
+
+  async requestVcVerification(vcDid: Did, verifierDid: Did): Promise<boolean> {
+    const vc = await this.vcStorageRepository.findOne({ vcDid });
+    if (!vc) {
+      throw new Error('VC not found');
+    }
+
+    let vcVerificationCase = (await this.vcVerificationCasesRepository.find({
+        where: { verifierDid, vc: { vcDid } },
+        relations: ['vc']
+      })).shift();
+    if (vcVerificationCase) {
+      throw new Error(`The verification case already exists. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+    }
+
+    vcVerificationCase = new VcVerificationCasesEntity();
+    vcVerificationCase.vc = vc;
+    vcVerificationCase.verifierDid = verifierDid;
+    vcVerificationCase.verificationStatus = VcVerificationStatusType.PendingVerify;
+
+    return !!(await this.vcVerificationCasesRepository.save(vcVerificationCase));
+  }
+
+  async verifyVc(vcDid: Did, verifierDid: Did, verificationStatus: VcVerificationStatusType): Promise<boolean> {
+    const vc = await this.vcStorageRepository.findOne({ vcDid });
+    if (!vc) {
+      throw new Error('VC not found');
+    }
+
+    const vcVerificationCase = (await this.vcVerificationCasesRepository.find({
+        where: { verifierDid, vc: { vcDid } },
+        relations: ['vc']
+      })).shift();
+    if (!vcVerificationCase) {
+      throw new Error(`The verification case does not exist. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+    }
+
+    if (vcVerificationCase.verificationStatus !== VcVerificationStatusType.PendingVerify) {
+      throw new Error(`The verification case has already been verified. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+    }
+
+    vcVerificationCase.verificationStatus = verificationStatus;
+
+    return !!(await this.vcVerificationCasesRepository.save(vcVerificationCase));
   }
 }

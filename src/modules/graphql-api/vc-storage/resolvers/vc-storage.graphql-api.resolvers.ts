@@ -5,6 +5,7 @@ import { Did } from "@/libs/common/types/ssi.types";
 import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 import {VcStorageGraphqlApiService} from "@/modules/graphql-api/vc-storage/services/vc-storage.graphql-api.service";
+import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 
 @UseGuards(SsoAuthGuard)
 @Resolver(of => VcStorageEntity)
@@ -18,7 +19,7 @@ export class VcStorageGraphqlApiResolvers {
     @Args("issuerDid", { type: () => String }) issuerDid?: string | undefined,
     @Args("holderDid", { type: () => String }) holderDid?: string | undefined,
   ) {
-    return this.vcStorageService.create({ vcDid, vcData, issuerDid, holderDid} as TVCStorageCreate);
+    return this.vcStorageService.createVC({ vcDid, vcData, issuerDid, holderDid} as TVCStorageCreate);
   }
 
   @Query(returns => [VcStorageEntity])
@@ -34,5 +35,20 @@ export class VcStorageGraphqlApiResolvers {
   @Mutation(returns => Boolean)
   async deleteVC(@Args("id", { type: () => Int }) id: number) {
     return this.vcStorageService.deleteVcById(id);
+  }
+
+  @Mutation(returns => Boolean)
+  async requestVcVerification(
+    @Args("vcDid", { type: () => String! }) vcDid: Did,
+    @Args("verifierDid", { type: () => String! }) verifierDid: Did) {
+    return this.vcStorageService.requestVcVerification(vcDid, verifierDid);
+  }
+
+  @Mutation(returns => Boolean)
+  async verifyVc(
+    @Args("vcDid", { type: () => String! }) vcDid: Did,
+    @Args("verifierDid", { type: () => String! }) verifierDid: Did,
+    @Args("verificationStatus", { type: () => String! }) verificationStatus: VcVerificationStatusType) {
+    return this.vcStorageService.verifyVc(vcDid, verifierDid, verificationStatus);
   }
 }
