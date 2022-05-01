@@ -12,7 +12,7 @@ export class VcVerificationCasesEntity {
   id: number;
 
   @Column({
-    name: " verifierDid",
+    name: "verifierDid",
     type: "varchar",
     length: 1024,
     nullable: false

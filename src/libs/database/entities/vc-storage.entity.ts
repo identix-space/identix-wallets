@@ -1,7 +1,7 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Field, Int, ObjectType} from "@nestjs/graphql";
-import {UsersEntity} from "./users.entity";
 import {VcVerificationCasesEntity} from "@/libs/database/entities/vc-verifier-cases.entity";
+import {Did} from "@/libs/common/types/ssi.types";
 
 @Entity("vc-storage")
 @ObjectType()
@@ -11,7 +11,7 @@ export class VcStorageEntity {
   id: number;
 
   @Column({
-    name: " vcDid",
+    name: "vcDid",
     type: "varchar",
     length: 1024,
     nullable: false,
@@ -29,24 +29,29 @@ export class VcStorageEntity {
   @Field({ nullable: false })
   public vcData: string;
 
-  @ManyToOne(
-    () => UsersEntity,
-    account => account.issuerVCs,
-  )
-  @Field(type => UsersEntity)
-  public issuer: UsersEntity;
+  @Column({
+    name: "issuerDid",
+    type: "varchar",
+    length: 1024,
+    nullable: false
+  })
+  @Field(type => String)
+  public issuerDid: Did;
 
-  @ManyToOne(
-    () => UsersEntity,
-    account => account.holderVCs,
-  )
-  @Field(type => UsersEntity)
-  public holder: UsersEntity;
+  @Column({
+    name: "holderDid",
+    type: "varchar",
+    length: 1024,
+    nullable: true
+  })
+  @Field(type => String)
+  public holderDid: Did;
 
   @OneToMany(
     () => VcVerificationCasesEntity,
     verificationCase => verificationCase.vc,
   )
+  @Field(type => [VcVerificationCasesEntity])
   public verificationCases: VcVerificationCasesEntity[]
 
   @Column({
@@ -67,7 +72,6 @@ export class VcStorageEntity {
   @Field({ nullable: false })
   public updatedAt: Date;
 }
-
 
 export class VCsListResult {
   @Field(type => [VcStorageEntity])

@@ -6,7 +6,6 @@ import {
   UpdateDateColumn
 } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { VcStorageEntity } from "@/libs/database/entities/vc-storage.entity";
 import { Web2AccountsEntity } from "@/libs/database/entities/web2-accounts.entity";
 import { Web3AccountsEntity } from "@/libs/database/entities/web3-accounts.entity";
 
@@ -43,18 +42,6 @@ export class UsersEntity {
   })
   @Field({ nullable: false })
   public updatedAt: Date;
-
-  @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.issuer,
-  )
-  public issuerVCs: VcStorageEntity[]
-
-  @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.holder,
-  )
-  public holderVCs: VcStorageEntity[]
 
   @OneToMany(
     () => Web2AccountsEntity,
