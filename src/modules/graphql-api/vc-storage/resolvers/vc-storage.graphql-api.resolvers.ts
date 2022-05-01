@@ -12,6 +12,7 @@ export class VcStorageGraphqlApiResolvers {
 
   @Mutation(returns => VcStorageEntity)
   async createVC(
+    @Args("vcDid", { type: () => String }) vcDid: string,
     @Args("vcData", { type: () => String }) vcData: string,
     @Args("issuer", { type: () => String }) issuer?: string | undefined,
     @Args("holder", { type: () => String }) holder?: string | undefined,

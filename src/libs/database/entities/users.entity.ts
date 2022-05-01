@@ -57,12 +57,6 @@ export class UsersEntity {
   public holderVCs: VcStorageEntity[]
 
   @OneToMany(
-    () => VcStorageEntity,
-    vc => vc.verifier,
-  )
-  public verifierVCs: VcStorageEntity[]
-
-  @OneToMany(
     () => Web2AccountsEntity,
     w2acc => w2acc.user,
   )
