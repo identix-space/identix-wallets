@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {BadRequestException, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Did} from "@/libs/common/types/ssi.types";
@@ -112,7 +112,10 @@ export class VcStorageGraphqlApiService {
     vcVerificationCase.verifierDid = verifierDid;
     vcVerificationCase.verificationStatus = VcVerificationStatusType.PendingVerify;
 
-    return !!(await this.vcVerificationCasesRepository.save(vcVerificationCase));
+    await this.vcVerificationCasesRepository.save(vcVerificationCase)
+    await this.refreshVc(vc);
+
+    return true;
   }
 
   async verifyVc(vcDid: Did, verifierDid: Did, verificationStatus: VcVerificationStatusType): Promise<boolean> {
@@ -134,7 +137,32 @@ export class VcStorageGraphqlApiService {
     }
 
     vcVerificationCase.verificationStatus = verificationStatus;
+    await this.vcVerificationCasesRepository.save(vcVerificationCase)
 
-    return !!(await this.vcVerificationCasesRepository.save(vcVerificationCase));
+    await this.refreshVc(vc);
+
+    return true;
+  }
+
+  async refreshVc(vc: VcStorageEntity): Promise<void> {
+    try {
+      const vcVerificationCases =
+        (await this.vcVerificationCasesRepository.find({
+          where: { vc: { vcDid: vc.vcDid } },
+          relations: ['vc']
+        }))
+        .map(vfc => ({ verifierDid: vfc.verifierDid, verificationStatus: vfc.verificationStatus }));
+
+      const vcDataObj = JSON.parse(vc.vcData);
+      const vcDataRawTextObj = JSON.parse(vcDataObj.vcRawText);
+      vcDataRawTextObj.verificationCases = vcVerificationCases;
+      vcDataObj.vcRawText = JSON.stringify(vcDataRawTextObj);
+      vcDataObj.verificationCases = vcVerificationCases;
+      vc.vcData = JSON.stringify(vcDataObj);
+
+      await this.vcStorageRepository.save(vc);
+    } catch (e) {
+      throw new BadRequestException('Invalid vcData: it could not be parsed and refreshed as json object');
+    }
   }
 }
