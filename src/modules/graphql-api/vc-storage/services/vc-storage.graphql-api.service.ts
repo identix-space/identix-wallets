@@ -17,14 +17,15 @@ export class VcStorageGraphqlApiService {
     private accountsRepository: Repository<UsersEntity>
   ) {}
 
-  async createVC(params: TVCStorageCreate): Promise<VcStorageEntity> {
-    const { vcDid, vcData, issuerDid, holderDid} = params;
+  async saveVC(params: TVCStorageCreate): Promise<VcStorageEntity> {
+    const { vcDid, vcData, issuerDid, holderDid, vcSecret } = params;
 
     const vc = new VcStorageEntity();
     vc.vcDid = vcDid;
     vc.vcData = vcData;
     vc.issuerDid = issuerDid;
     vc.holderDid = holderDid;
+    vc.vcSecret = vcSecret;
 
     await this.vcStorageRepository.save(vc);
 
