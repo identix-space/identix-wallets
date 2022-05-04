@@ -154,9 +154,6 @@ export class VcStorageGraphqlApiService {
         .map(vfc => ({ verifierDid: vfc.verifierDid, verificationStatus: vfc.verificationStatus }));
 
       const vcDataObj = JSON.parse(vc.vcData);
-      const vcDataRawTextObj = JSON.parse(vcDataObj.vcRawText);
-      vcDataRawTextObj.verificationCases = vcVerificationCases;
-      vcDataObj.vcRawText = JSON.stringify(vcDataRawTextObj);
       vcDataObj.verificationCases = vcVerificationCases;
       vc.vcData = JSON.stringify(vcDataObj);
 
