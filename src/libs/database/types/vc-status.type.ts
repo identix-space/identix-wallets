@@ -1,6 +1,12 @@
-export enum VcStatusType {
-  PendingVerifyRequest = "PENDING_VERIFY_REQUEST",
+import {registerEnumType} from "@nestjs/graphql";
+
+export enum VcVerificationStatusType {
   PendingVerify = "PENDING_VERIFY",
   Accepted = "ACCEPTED",
   Rejected = "REJECTED"
 }
+
+
+registerEnumType(VcVerificationStatusType, {
+  name: 'VcVerificationStatusType',
+});

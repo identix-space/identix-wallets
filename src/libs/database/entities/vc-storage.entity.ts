@@ -1,7 +1,7 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Field, Int, ObjectType} from "@nestjs/graphql";
-import {UsersEntity} from "./users.entity";
-import {VcStatusType} from "@/libs/database/types/vc-status.type";
+import {VcVerificationCasesEntity} from "@/libs/database/entities/vc-verifier-cases.entity";
+import {Did} from "@/libs/common/types/ssi.types";
 
 @Entity("vc-storage")
 @ObjectType()
@@ -9,6 +9,16 @@ export class VcStorageEntity {
   @PrimaryGeneratedColumn()
   @Field(type => Int)
   id: number;
+
+  @Column({
+    name: "vcDid",
+    type: "varchar",
+    length: 1024,
+    nullable: false,
+    unique: true
+  })
+  @Field({ nullable: false })
+  public vcDid: string;
 
   @Column({
     name: "vcData",
@@ -19,35 +29,30 @@ export class VcStorageEntity {
   @Field({ nullable: false })
   public vcData: string;
 
-  @ManyToOne(
-    () => UsersEntity,
-    account => account.issuerVCs,
-  )
-  @Field(type => UsersEntity)
-  public issuer: UsersEntity;
-
-  @ManyToOne(
-    () => UsersEntity,
-    account => account.holderVCs,
-  )
-  @Field(type => UsersEntity)
-  public holder: UsersEntity;
-
-  @ManyToOne(
-    () => UsersEntity,
-    account => account.verifierVCs,
-  )
-  @Field(type => UsersEntity)
-  public verifier: UsersEntity;
-
   @Column({
-    name: "status",
-    type: "enum",
-    enum: VcStatusType,
+    name: "issuerDid",
+    type: "varchar",
+    length: 1024,
     nullable: false
   })
-  @Field(type => String, { nullable: false })
-  public status: VcStatusType;
+  @Field(type => String)
+  public issuerDid: Did;
+
+  @Column({
+    name: "holderDid",
+    type: "varchar",
+    length: 1024,
+    nullable: true
+  })
+  @Field(type => String)
+  public holderDid: Did;
+
+  @OneToMany(
+    () => VcVerificationCasesEntity,
+    verificationCase => verificationCase.vc,
+  )
+  @Field(type => [VcVerificationCasesEntity])
+  public verificationCases: VcVerificationCasesEntity[]
 
   @Column({
     name: "createdAt",
@@ -67,7 +72,6 @@ export class VcStorageEntity {
   @Field({ nullable: false })
   public updatedAt: Date;
 }
-
 
 export class VCsListResult {
   @Field(type => [VcStorageEntity])
