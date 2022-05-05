@@ -1072,6 +1072,23 @@
   resolved "https://registry.yarnpkg.com/@sqltools/formatter/-/formatter-1.2.3.tgz#1185726610acc37317ddab11c3c7f9066966bd20"
   integrity sha512-O3uyB/JbkAEMZaP3YqyHH7TMnex7tWyCbCI4EfJdOCoN6HIhqdJBWTM6aCCiWQ/5f5wxjgU735QAIpJbjDvmzg==
 
+"@tonclient/appkit@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@tonclient/appkit/-/appkit-0.3.0.tgz#bf5f975c5753ea426c9ef9f5dc0e849f6aad816d"
+  integrity sha512-ZIl3od8kQL/8zvhn+dnZpnaWxuBWrE2YaxIf+McURHLUG1l5aL/yzrIzUq5kgz/HokJnLaEMcCAhmO09FeofNw==
+  dependencies:
+    "@tonclient/core" "^1"
+
+"@tonclient/core@^1", "@tonclient/core@^1.30.0":
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/@tonclient/core/-/core-1.30.0.tgz#789d919e51c8aa86a9718521b5658666e75b521d"
+  integrity sha512-/3ECtGoyOs22U3QjD0stxxPOS39tumFvkx2xly3QJmIUhZccoFMwgWzah8QelLz4+nzzaDJxGeVgiknfgsGSZg==
+
+"@tonclient/lib-node@^1.30.0":
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/@tonclient/lib-node/-/lib-node-1.30.0.tgz#2ae938959f6d55ce93810b0920d4059088a5f6ab"
+  integrity sha512-gp2l5E0rDOJOYA3J9U0RxDu/kkUVkvGrQfOieyc6qd1EcwS+Zuac4KJvmrpxITkUBNDCJd2dhLeXoyOIjdQe/g==
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
@@ -2910,6 +2927,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 cssfilter@0.0.10:
   version "0.0.10"
@@ -6237,6 +6259,11 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+noble-ed25519@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/noble-ed25519/-/noble-ed25519-1.2.6.tgz#a55b75c61da000498abb43ffd81caaa370bfed22"
+  integrity sha512-zfnWqg9FVMp8CnzUpAjbt1nDXpDjCvxYiCXdnW1mY8zQHw/6twUlkFm14VPdojVzc0kcd+i9zT79+26GcNbsuQ==
 
 node-emoji@1.10.0:
   version "1.10.0"

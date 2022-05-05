@@ -1,14 +1,9 @@
-import { ConfigService } from "@nestjs/config";
-
-import {
-  SSOClient,
-  ISSOClient,
-  SSOClientConfiguration
-} from "@/libs/sso-client/types";
-import { LoggingService } from "@/libs/logging/services/logging.service";
-import { SsoClientService } from "@/libs/sso-client/services/sso-client.service";
-import { SsoService } from "identix-sso-client-js";
-import { Did } from "../types";
+import {ConfigService} from '@nestjs/config';
+import {SSOClient, ISSOClient, SSOClientConfiguration} from "@/libs/sso-client/types";
+import {LoggingService} from "@/libs/logging/services/logging.service";
+import {Did} from "@/libs/everscale-client/types";
+import {SsoService} from "identix-sso-client-js";
+import {SsoClientService} from "../services/sso-client.service";
 
 export const SSOClientProvider = {
   provide: SSOClient,

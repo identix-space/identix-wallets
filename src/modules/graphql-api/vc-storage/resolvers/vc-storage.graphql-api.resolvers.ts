@@ -6,20 +6,30 @@ import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 import {VcStorageGraphqlApiService} from "@/modules/graphql-api/vc-storage/services/vc-storage.graphql-api.service";
 import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
+import {ClaimsGroup} from "@/libs/everscale-client/types";
 
-//@UseGuards(SsoAuthGuard)
+//S@UseGuards(SsoAuthGuard)
 @Resolver(of => VcStorageEntity)
 export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}
 
+  @Mutation(returns => String)
+  async issuerVC(
+    @Args("claims", { type: () => [ClaimsGroup] }) claims: ClaimsGroup[],
+    @Args("issuerDid", { type: () => String }) issuerDid: string
+  ) {
+    return this.vcStorageService.issuerVC(claims, issuerDid);
+  }
+
   @Mutation(returns => VcStorageEntity)
-  async createVC(
+  async saveVC(
     @Args("vcDid", { type: () => String }) vcDid: string,
     @Args("vcData", { type: () => String }) vcData: string,
     @Args("issuerDid", { type: () => String }) issuerDid?: string | undefined,
     @Args("holderDid", { type: () => String }) holderDid?: string | undefined,
+    @Args("vcSecret", { type: () => String }) vcSecret?: string | undefined,
   ) {
-    return this.vcStorageService.createVC({ vcDid, vcData, issuerDid, holderDid} as TVCStorageCreate);
+    return this.vcStorageService.saveVC({ vcDid, vcData, issuerDid, holderDid, vcSecret } as TVCStorageCreate);
   }
 
   @Query(returns => [VcStorageEntity])
