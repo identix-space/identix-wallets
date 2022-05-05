@@ -1,5 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { EverscaleClient, IEverscaleClient, EverscaleClientConfiguration } from "@/libs/everscale-client/types";
+import {
+  EverscaleClient,
+  IEverscaleClient,
+  EverscaleClientConfiguration,
+  ClaimsGroup, Did
+} from "@/libs/everscale-client/types";
 import { EverscaleClientService } from "@/libs/everscale-client/services/everscale-client.service";
 import {LoggingService} from "@/libs//logging/services/logging.service";
 
@@ -59,6 +64,9 @@ async function everscaleClientFactory(
     },
     signMessage: async (input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}> => {
       return everscaleClient.signMessage(input);
+    },
+    issuerVC: async (claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> => {
+      return everscaleClient.issuerVC(claims, issuerPubKey);
     }
   };
 }

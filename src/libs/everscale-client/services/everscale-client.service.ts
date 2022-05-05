@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {IEverscaleClientService, IEverscaleClientsParamsInit} from "@/libs/everscale-client/types";
+import {ClaimsGroup, IEverscaleClientService, IEverscaleClientsParamsInit} from "@/libs/everscale-client/types";
 
 import {Account} from '@tonclient/appkit';
 import {libNode} from '@tonclient/lib-node';
@@ -8,6 +8,7 @@ import {LoggingService} from "@/libs/logging/services/logging.service";
 import {readFileAsBase64} from "@/libs/common/helpers/files.helpers";
 import {Did} from "../types";
 import {join} from 'path';
+import {faker} from "@faker-js/faker";
 
 const idxVcFabricContractAbi = require('../contracts/vc-management/IdxVcFabric.abi.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 const idxDidDocContractAbi = require('../contracts/did-management/IdxDidDocument.abi.json' ); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -128,8 +129,35 @@ export class EverscaleClientService implements IEverscaleClientService {
     return newDidAddress;
   }
 
+  async issuerVC(claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> {
+    const claimsGroupsMock = [
+      {
+        hmacHigh_claimGroup: this.randomLengthString(64),
+        hmacHigh_groupDid: this.randomLengthString(64),
+        signHighPart: this.randomLengthString(256),
+        signLowPart: this.randomLengthString(256)
+      },
+      {
+        hmacHigh_claimGroup: this.randomLengthString(64),
+        hmacHigh_groupDid: this.randomLengthString(64),
+        signHighPart: this.randomLengthString(256),
+        signLowPart: this.randomLengthString(256)
+      }
+    ]
+    const issuerPubKeyMock = "8e6d7b90ac4b88d415b1a9f4fb234ed7332076281d432bb93d165284fc816f57"
+
+    const vc = await this.idxVcFabricAdminAccount.run('issueVc', { claims: claimsGroupsMock, issuerPubKey: issuerPubKeyMock});
+    const vcDidAddress = vc.decoded?.output.vcAddress;
+    await this.idxDidRegistryAccount.free();
+
+    return vcDidAddress;
+  }
 
   private text2base64(text: string): string {
     return Buffer.from(text, "utf8").toString("base64");
+  }
+
+  private randomLengthString(lengthInBits: number): Buffer {
+    return Buffer.from(faker.random.alphaNumeric(30), "utf8").slice(0, lengthInBits / 8);
   }
 }
