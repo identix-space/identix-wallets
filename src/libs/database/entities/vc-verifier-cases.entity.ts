@@ -1,9 +1,7 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Field, Int, ObjectType} from "@nestjs/graphql";
-import {UsersEntity} from "./users.entity";
 import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 import {VcStorageEntity} from "@/libs/database/entities/vc-storage.entity";
-import {alias} from "yargs";
 
 @Entity("vc-verifier-cases")
 @ObjectType()

@@ -18,7 +18,7 @@ export class VcStorageEntity {
     unique: true
   })
   @Field({ nullable: false })
-  public vcDid: string;
+  public vcDid: Did;
 
   @Column({
     name: "vcData",
@@ -46,6 +46,16 @@ export class VcStorageEntity {
   })
   @Field(type => String)
   public holderDid: Did;
+
+  @Column({
+    name: "vcSecret",
+    type: "varchar",
+    length: 1024,
+    nullable: true,
+    unique: false
+  })
+  @Field({ nullable: true })
+  public vcSecret: string;
 
   @OneToMany(
     () => VcVerificationCasesEntity,
