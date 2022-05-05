@@ -1,7 +1,5 @@
-FROM mhart/alpine-node:14 AS build
+FROM node:16 AS build
 WORKDIR /usr/src/app
-
-RUN apk --no-cache add bash git && rm -rf /var/cache/apk/*
 
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
