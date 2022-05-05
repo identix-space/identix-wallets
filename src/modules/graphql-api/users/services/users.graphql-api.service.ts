@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from "@nestjs/common";
+import {BadRequestException, Inject, Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
@@ -7,6 +7,7 @@ import {TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-
 
 import { faker } from "@faker-js/faker";
 import {Blockchains} from "@/libs/database/types/web3.types";
+import {IEverscaleClient, EverscaleClient} from "@/libs/everscale-client/types";
 
 @Injectable()
 export class UsersGraphqlApiService {
@@ -18,7 +19,8 @@ export class UsersGraphqlApiService {
     @InjectRepository(Web3AccountsEntity)
     private web3AccountsRepository: Repository<Web3AccountsEntity>,
     @InjectRepository(DidsEntity)
-    private didsRepository: Repository<DidsEntity>
+    private didsRepository: Repository<DidsEntity>,
+    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
   ) {}
 
   async getOrCreateAccount(params: TAccountGetOrCreate): Promise<TGetOrCreateAccountResult> {
@@ -92,10 +94,8 @@ export class UsersGraphqlApiService {
    * @private
    */
   private async generateKeys(): Promise<{public: string, private: string}> {
-    return {
-      public: faker.random.alphaNumeric(30),
-      private: faker.random.alphaNumeric(30)
-    }
+    const keys = await this.everscaleClient.generateKeys()
+    return { public: keys.public, private: keys.secret };
   }
 
   /**
