@@ -5,7 +5,7 @@ import { SSOClientConfiguration } from "../types";
 export default registerAs(
   "sso-client-configuration",
   (): SSOClientConfiguration => ({
-    pathToClientDid: process.env.PATH_TO_CLIENT_DID,
+    ssoClientToken: process.env.SSO_CLIENT_TOKEN,
     ssoGraphqlApiUrl: process.env.SSO_GRAPHQL_API_URL
   })
 );
