@@ -48,20 +48,38 @@ export class EverscaleClientService implements IEverscaleClientService {
     return await this.tonClient.crypto.generate_random_sign_keys();
   }
 
-  async verifyMessage(input: {
-    signatureHex: string,
+  /**
+   * https://github.com/tonlabs/ever-sdk-js/blob/c2ebf34ebb5e58d0b531baab322a3bb358502055/packages/tests/src/tests/crypto.ts
+   *
+   * @param input
+   */
+  async verifySignature(input: {
+    signed: string,
     message: string,
     publicKey: string
   }): Promise<boolean> {
-    const hash = crypto.createHash('sha256').update(input.message).digest('hex');
-    return await ed.verify(input.signatureHex, hash, input.publicKey);
+    const {signed, message, publicKey} = input;
+    const hash = Buffer.from(message, 'binary').toString('base64');
+
+    const result = await this.tonClient.crypto.verify_signature({
+      public: publicKey,
+      signed,
+    });
+
+    return result.unsigned === hash;
   }
 
+  /**
+   * https://github.com/tonlabs/ever-sdk-js/blob/c2ebf34ebb5e58d0b531baab322a3bb358502055/packages/tests/src/tests/crypto.ts
+   *
+   * @param input
+   */
   async signMessage(input: {
     message: string,
-    privateKey: string
-  }): Promise<string> {
-    const msgHash = crypto.createHash('sha256').update(input.message).digest('hex');
-    return await ed.sign(msgHash, input.privateKey);
+    keys: {public: string, secret: string}
+  }): Promise<{signed: string, signature: string}> {
+    const { message, keys } = input;
+    const hash = Buffer.from(message, 'binary').toString('base64');
+    return this.tonClient.crypto.sign({keys, unsigned: hash})
   }
 }

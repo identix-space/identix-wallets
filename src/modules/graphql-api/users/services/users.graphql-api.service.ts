@@ -88,6 +88,38 @@ export class UsersGraphqlApiService {
     return !!(await this.usersRepository.delete({ id }));
   }
 
+  async signMessage(accountDid: string, message: string): Promise<{signed: string, signature: string}> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    const keys = { public: didEntry.web3Account.publicKey, secret: didEntry.web3Account.privateKey };
+
+    return this.everscaleClient.signMessage({ message, keys });
+  }
+
+  async verifySignedMessage(accountDid: string, signedMessage: string, message: string): Promise<boolean> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    const publicKey = didEntry.web3Account.publicKey;
+
+    return this.everscaleClient.verifySignature({signed: signedMessage, message, publicKey});
+  }
+
   /**
    * Generates public and private keys pair
    *

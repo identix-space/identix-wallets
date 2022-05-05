@@ -55,10 +55,10 @@ async function everscaleClientFactory(
     generateKeys: async (): Promise<{public: string, secret: string}> => {
       return everscaleClient.generateKeys();
     },
-    verifyMessage: async (input: {signatureHex: string, message: string, publicKey: string}): Promise<boolean> => {
-      return everscaleClient.verifyMessage(input);
+    verifySignature: async (input: {signed: string, message: string, publicKey: string}): Promise<boolean> => {
+      return everscaleClient.verifySignature(input);
     },
-    signMessage: async (input: {message: string, privateKey: string}): Promise<string> => {
+    signMessage: async (input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}> => {
       return everscaleClient.signMessage(input);
     }
   };

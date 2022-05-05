@@ -13,8 +13,8 @@ export const EverscaleClient = 'EVERSCALE_CLIENT';
 
 export interface IEverscaleClient {
   generateKeys(): Promise<{public: string, secret: string}>;
-  verifyMessage(input: {signatureHex: string, message: string, publicKey: string}): Promise<boolean>;
-  signMessage(input: {message: string, privateKey: string}): Promise<string>;
+  verifySignature(input: {signed: string, message: string, publicKey: string}): Promise<boolean>;
+  signMessage(input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}>;
 }
 
 export interface IEverscaleClientsParamsInit {
@@ -31,7 +31,7 @@ export interface IEverscaleClientsParamsInit {
 export interface IEverscaleClientService {
   init: (params: IEverscaleClientsParamsInit, logger: LoggingService) => void;
   generateKeys(): Promise<{public: string, secret: string}>;
-  verifyMessage(input: {signatureHex: string, message: string, publicKey: string}): Promise<boolean>;
-  signMessage(input: {message: string, privateKey: string}): Promise<string>;
+  verifySignature(input: {signed: string, message: string, publicKey: string}): Promise<boolean>;
+  signMessage(input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}>;
 }
 
