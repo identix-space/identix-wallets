@@ -7,6 +7,7 @@ import {TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-
 
 import { faker } from "@faker-js/faker";
 import {Blockchains} from "@/libs/database/types/web3.types";
+import {did} from "@/libs/common/helpers/strings.helpers";
 
 @Injectable()
 export class UsersGraphqlApiService {
@@ -93,8 +94,8 @@ export class UsersGraphqlApiService {
    */
   private async generateKeys(): Promise<{public: string, private: string}> {
     return {
-      public: faker.random.alphaNumeric(30),
-      private: faker.random.alphaNumeric(30)
+      public: faker.random.alphaNumeric(64),
+      private: faker.random.alphaNumeric(64)
     }
   }
 
@@ -105,7 +106,7 @@ export class UsersGraphqlApiService {
    * @private
    */
   private async createDid(publicKey: string): Promise<string> {
-    return `did:ever:${faker.random.alphaNumeric(30)}`
+    return did();
   }
 
   /**
