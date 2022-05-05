@@ -4,8 +4,6 @@ import {IEverscaleClientService, IEverscaleClientsParamsInit} from "@/libs/evers
 import {Account} from '@tonclient/appkit';
 import {libNode} from '@tonclient/lib-node';
 import {signerKeys, TonClient} from '@tonclient/core';
-import * as ed from 'noble-ed25519';
-import crypto from 'crypto';
 import {LoggingService} from "@/libs/logging/services/logging.service";
 
 @Injectable()
