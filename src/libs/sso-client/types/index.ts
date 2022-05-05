@@ -12,7 +12,7 @@ export interface ISSOClientService {
 }
 
 export type SSOClientConfiguration = {
-  pathToClientDid: string;
+  ssoClientToken: string;
   ssoGraphqlApiUrl: string;
 };
 
