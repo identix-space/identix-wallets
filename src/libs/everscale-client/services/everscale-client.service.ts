@@ -57,14 +57,13 @@ export class EverscaleClientService implements IEverscaleClientService {
     publicKey: string
   }): Promise<boolean> {
     const {signed, message, publicKey} = input;
-    const hash = Buffer.from(message, 'binary').toString('base64');
 
     const result = await this.tonClient.crypto.verify_signature({
       public: publicKey,
       signed,
     });
 
-    return result.unsigned === hash;
+    return result.unsigned === this.text2base64(message);
   }
 
   /**
@@ -77,7 +76,11 @@ export class EverscaleClientService implements IEverscaleClientService {
     keys: {public: string, secret: string}
   }): Promise<{signed: string, signature: string}> {
     const { message, keys } = input;
-    const hash = Buffer.from(message, 'binary').toString('base64');
-    return this.tonClient.crypto.sign({keys, unsigned: hash})
+
+    return this.tonClient.crypto.sign({keys, unsigned: this.text2base64(message)})
+  }
+
+  private text2base64(text: string): string {
+    return Buffer.from(text, "utf8").toString("base64");
   }
 }
