@@ -7,7 +7,7 @@ import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 import {VcStorageGraphqlApiService} from "@/modules/graphql-api/vc-storage/services/vc-storage.graphql-api.service";
 import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 
-@UseGuards(SsoAuthGuard)
+//@UseGuards(SsoAuthGuard)
 @Resolver(of => VcStorageEntity)
 export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}
