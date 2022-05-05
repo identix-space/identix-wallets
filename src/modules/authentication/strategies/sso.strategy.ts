@@ -2,7 +2,7 @@ import { Strategy } from "passport-custom";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthenticationService } from "../services/authentication.service";
-import { Did } from "@/libs/sso-client/types";
+import { Did } from "@/libs/everscale-client/types";
 import { Headers } from "@/modules/authentication/types";
 import { Request } from "express";
 import { existsSync, readFile } from "fs";

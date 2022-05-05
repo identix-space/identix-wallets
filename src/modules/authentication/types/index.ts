@@ -1,6 +1,6 @@
 import { ExecutionContext } from "@nestjs/common";
 import { Request } from "express";
-import { Did } from "@/libs/sso-client/types";
+import { Did } from "@/libs/everscale-client/types";
 
 export type Headers = { [key: string]: string | number };
 

@@ -1,11 +1,10 @@
 import {
   Inject,
   Injectable,
-  BadRequestException,
-  UnauthorizedException
 } from "@nestjs/common";
 
-import { SSOClient, ISSOClient, Did } from "@/libs/sso-client/types";
+import { SSOClient, ISSOClient} from "@/libs/sso-client/types";
+import {Did} from "@/libs/everscale-client/types";
 
 @Injectable()
 export class AuthenticationService {

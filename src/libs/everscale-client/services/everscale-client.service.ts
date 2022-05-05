@@ -3,21 +3,29 @@ import {IEverscaleClientService, IEverscaleClientsParamsInit} from "@/libs/evers
 
 import {Account} from '@tonclient/appkit';
 import {libNode} from '@tonclient/lib-node';
-import {signerKeys, TonClient} from '@tonclient/core';
+import {KeyPair, signerKeys, TonClient} from '@tonclient/core';
 import {LoggingService} from "@/libs/logging/services/logging.service";
+import {readFileAsBase64} from "@/libs/common/helpers/files.helpers";
+import {Did} from "../types";
+import {join} from 'path';
+
+const idxVcFabricContractAbi = require('../contracts/vc-management/IdxVcFabric.abi.json'); // eslint-disable-line @typescript-eslint/no-var-requires
+const idxDidDocContractAbi = require('../contracts/did-management/IdxDidDocument.abi.json' ); // eslint-disable-line @typescript-eslint/no-var-requires
+const idxDidRegistryContractAbi = require('../contracts/did-management/IdxDidRegistry.abi.json' ); // eslint-disable-line @typescript-eslint/no-var-requires
 
 @Injectable()
 export class EverscaleClientService implements IEverscaleClientService {
   private logger: LoggingService;
   private tonClient: TonClient;
   private idxVcFabricAdminAccount: Account;
+  private idxDidDocAccount: Account;
+  private idxDidRegistryAccount: Account;
 
-  init(params: IEverscaleClientsParamsInit, logger: LoggingService): void {
+  async init(params: IEverscaleClientsParamsInit, logger: LoggingService): Promise<void> {
     const {
-      everscaleAdminAddressesKeys,
-      idxVcFabricContractAbiBase64,
-      idxVcFabricContractTvcBase64,
+      everscaleSignerAddresses,
       defaultNetwork,
+      contractsAddresses,
       networks
     } = params;
 
@@ -26,20 +34,42 @@ export class EverscaleClientService implements IEverscaleClientService {
     TonClient.useBinaryLibrary(libNode);
     this.tonClient = new TonClient({network: {endpoints: networks[defaultNetwork]}});
 
-    const idxVcFabricContractAbiJson = Buffer.from(idxVcFabricContractAbiBase64, 'base64').toString()
-    const idxVcFabricContractAbi = JSON.parse(idxVcFabricContractAbiJson);
+    const pathTvc = join(__dirname, '../contracts/vc-management/IdxVcFabric.tvc');
     const idxVcFabricContract = {
       abi: idxVcFabricContractAbi,
-      tvc: idxVcFabricContractTvcBase64
+      tvc: await readFileAsBase64(join(__dirname, '../contracts/vc-management/IdxVcFabric.tvc'))
     };
 
     this.idxVcFabricAdminAccount = new Account(
       idxVcFabricContract,
       {
-        signer: signerKeys(everscaleAdminAddressesKeys.idxVcFabric),
+        address: contractsAddresses.dxVcFabric,
+        signer: signerKeys(everscaleSignerAddresses.idxVcFabric.keys),
         client: this.tonClient
       }
     );
+
+    const idxDidDocContract = {
+      abi: idxDidDocContractAbi,
+      tvc: await readFileAsBase64(join(__dirname, '../contracts/did-management/IdxDidDocument.tvc'))
+    };
+
+    this.idxDidDocAccount = new Account(idxDidDocContract, {
+      address: contractsAddresses.idxDidDoc,
+      client: this.tonClient
+    });
+
+    const idxDidRegistryContract = {
+      abi: idxDidRegistryContractAbi,
+      tvc: await readFileAsBase64(join(__dirname, '../contracts/did-management/IdxDidRegistry.tvc'))
+    };
+
+    this.idxDidRegistryAccount = new Account(idxDidRegistryContract, {
+      address: contractsAddresses.idxDidRegistry,
+      signer: signerKeys(everscaleSignerAddresses.didRegistry.keys),
+      client: this.tonClient
+    });
+
   }
 
   async generateKeys(): Promise<{public: string, secret: string}> {
@@ -79,6 +109,25 @@ export class EverscaleClientService implements IEverscaleClientService {
 
     return this.tonClient.crypto.sign({keys, unsigned: this.text2base64(message)})
   }
+
+  async getDidDocumentPublicKey(didDocumentAddress: string): Promise<string> {
+    const res = await this.idxDidDocAccount.runLocal('getSubjectPubKey', {});
+    await this.idxDidDocAccount.free();
+    return res.decoded?.output.value0;
+  }
+
+  async issueDidDocument(publicKey: string): Promise<Did> {
+    const newDidDoc = await this.idxDidRegistryAccount.run('issueDidDoc', {
+      answerId: 0,
+      subjectPubKey: `0x${publicKey}`,
+      salt: '0',
+      didController: '0:0000000000000000000000000000000000000000000000000000000000000000'
+    });
+    const newDidAddress = newDidDoc.decoded?.output.didDocAddr;
+    await this.idxDidRegistryAccount.free();
+    return newDidAddress;
+  }
+
 
   private text2base64(text: string): string {
     return Buffer.from(text, "utf8").toString("base64");
