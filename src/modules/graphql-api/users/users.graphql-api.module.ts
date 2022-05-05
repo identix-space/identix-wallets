@@ -5,11 +5,13 @@ import { DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity } from 
 import { LoggingModule } from "@/libs/logging/logging.module";
 import { UsersGraphqlApiService } from "@/modules/graphql-api/users/services/users.graphql-api.service";
 import { UsersGraphqlApiResolvers } from "@/modules/graphql-api/users/resolvers/users.graphql-api.resolvers";
+import { EverscaleClientModule } from "@/libs/everscale-client/everscale-client.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity]),
-    LoggingModule.forRoot({ serviceName: "Users GraphQL module" })
+    LoggingModule.forRoot({ serviceName: "Users GraphQL module" }),
+    EverscaleClientModule
   ],
   providers: [UsersGraphqlApiResolvers, UsersGraphqlApiService],
   exports: [UsersGraphqlApiService]

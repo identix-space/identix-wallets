@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from "@nestjs/common";
+import {BadRequestException, Inject, Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
@@ -7,6 +7,7 @@ import {TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-
 
 import { faker } from "@faker-js/faker";
 import {Blockchains} from "@/libs/database/types/web3.types";
+import {IEverscaleClient, EverscaleClient} from "@/libs/everscale-client/types";
 
 @Injectable()
 export class UsersGraphqlApiService {
@@ -18,7 +19,8 @@ export class UsersGraphqlApiService {
     @InjectRepository(Web3AccountsEntity)
     private web3AccountsRepository: Repository<Web3AccountsEntity>,
     @InjectRepository(DidsEntity)
-    private didsRepository: Repository<DidsEntity>
+    private didsRepository: Repository<DidsEntity>,
+    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
   ) {}
 
   async getOrCreateAccount(params: TAccountGetOrCreate): Promise<TGetOrCreateAccountResult> {
@@ -86,16 +88,46 @@ export class UsersGraphqlApiService {
     return !!(await this.usersRepository.delete({ id }));
   }
 
+  async signMessage(accountDid: string, message: string): Promise<{signed: string, signature: string}> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    const keys = { public: didEntry.web3Account.publicKey, secret: didEntry.web3Account.privateKey };
+
+    return this.everscaleClient.signMessage({ message, keys });
+  }
+
+  async verifySignedMessage(accountDid: string, signedMessage: string, message: string): Promise<boolean> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    const publicKey = didEntry.web3Account.publicKey;
+
+    return this.everscaleClient.verifySignature({signed: signedMessage, message, publicKey});
+  }
+
   /**
    * Generates public and private keys pair
    *
    * @private
    */
   private async generateKeys(): Promise<{public: string, private: string}> {
-    return {
-      public: faker.random.alphaNumeric(30),
-      private: faker.random.alphaNumeric(30)
-    }
+    const keys = await this.everscaleClient.generateKeys()
+    return { public: keys.public, private: keys.secret };
   }
 
   /**
