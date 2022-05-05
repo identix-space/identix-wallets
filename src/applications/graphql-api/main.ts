@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = await app.resolve(LoggingService);
 
-  const port = process.env.HTTP_PORT || 3000;
+  const port = process.env.BACKEND_HTTP_GRAPHQL_PORT || 3000;
   await app.listen(port);
 
   logger.log(
