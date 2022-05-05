@@ -5,7 +5,7 @@ import { UsersGraphqlApiService } from "@/modules/graphql-api/users/services/use
 import { TAccountGetOrCreate, TGetOrCreateAccountResult } from "@/modules/graphql-api/users/types";
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 
-@UseGuards(SsoAuthGuard)
+//@UseGuards(SsoAuthGuard)
 @Resolver(of => UsersEntity)
 export class UsersGraphqlApiResolvers {
   constructor(private usersService: UsersGraphqlApiService) {}
