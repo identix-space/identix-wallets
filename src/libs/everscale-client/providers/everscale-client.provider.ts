@@ -67,6 +67,9 @@ async function everscaleClientFactory(
     },
     issuerVC: async (claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> => {
       return everscaleClient.issuerVC(claims, issuerPubKey);
+    },
+    issueDidDocument: async (publicKey: string): Promise<Did> => {
+      return everscaleClient.issueDidDocument(publicKey);
     }
   };
 }

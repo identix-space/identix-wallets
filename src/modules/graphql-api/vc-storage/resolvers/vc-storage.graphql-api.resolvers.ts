@@ -16,9 +16,9 @@ export class VcStorageGraphqlApiResolvers {
   @Mutation(returns => String)
   async issuerVC(
     @Args("claims", { type: () => [ClaimsGroup] }) claims: ClaimsGroup[],
-    @Args("issuerPublicKey", { type: () => String }) issuerPublicKey: string
+    @Args("issuerDid", { type: () => String }) issuerDid: string
   ) {
-    return this.vcStorageService.issuerVC(claims, issuerPublicKey);
+    return this.vcStorageService.issuerVC(claims, issuerDid);
   }
 
   @Mutation(returns => VcStorageEntity)

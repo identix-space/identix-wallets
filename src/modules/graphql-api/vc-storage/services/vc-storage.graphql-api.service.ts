@@ -2,7 +2,7 @@ import {BadRequestException, Inject, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Did} from "@/libs/common/types/ssi.types";
-import {UsersEntity, VcStorageEntity, VcVerificationCasesEntity} from "@/libs/database/entities";
+import {DidsEntity, UsersEntity, VcStorageEntity, VcVerificationCasesEntity} from "@/libs/database/entities";
 import {TVCStorageCreate} from "@/modules/graphql-api/vc-storage/types";
 import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 import {ClaimsGroup, EverscaleClient, IEverscaleClient} from "@/libs/everscale-client/types";
@@ -16,6 +16,8 @@ export class VcStorageGraphqlApiService {
     private vcVerificationCasesRepository: Repository<VcVerificationCasesEntity>,
     @InjectRepository(UsersEntity)
     private accountsRepository: Repository<UsersEntity>,
+    @InjectRepository(DidsEntity)
+    private didsRepository: Repository<DidsEntity>,
     @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
   ) {}
 
@@ -25,8 +27,20 @@ export class VcStorageGraphqlApiService {
    * @param claims
    * @param issuerPublicKey
    */
-  async issuerVC(claims: ClaimsGroup[], issuerPublicKey: string): Promise<Did> {
+  async issuerVC(claims: ClaimsGroup[], issuerDid: string): Promise<Did> {
     try {
+      const didEntry = await this.didsRepository.findOne(
+        {
+          where: { did: issuerDid },
+          relations: ['web3Account']
+        });
+
+      if (!didEntry) {
+        throw new BadRequestException(`Account not found`);
+      }
+
+      const issuerPublicKey = didEntry.web3Account.publicKey;
+
       return this.everscaleClient.issuerVC(claims, issuerPublicKey);
     } catch (e) {
       throw new BadRequestException(`Could not issue VC to Everscale: ${e.message}`);

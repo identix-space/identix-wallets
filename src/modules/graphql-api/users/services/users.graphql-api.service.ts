@@ -140,7 +140,7 @@ export class UsersGraphqlApiService {
    * @private
    */
   private async createDid(publicKey: string): Promise<string> {
-    return `did:ever:${faker.random.alphaNumeric(30)}`
+    return this.everscaleClient.issueDidDocument(publicKey);
   }
 
   /**
