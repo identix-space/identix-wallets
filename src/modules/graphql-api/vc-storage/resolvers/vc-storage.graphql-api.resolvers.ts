@@ -8,7 +8,7 @@ import {VcStorageGraphqlApiService} from "@/modules/graphql-api/vc-storage/servi
 import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
 import {ClaimsGroup} from "@/libs/everscale-client/types";
 
-@UseGuards(SsoAuthGuard)
+//S@UseGuards(SsoAuthGuard)
 @Resolver(of => VcStorageEntity)
 export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}

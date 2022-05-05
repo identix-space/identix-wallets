@@ -41,7 +41,7 @@ export class VcStorageGraphqlApiService {
 
       const issuerPublicKey = didEntry.web3Account.publicKey;
 
-      return this.everscaleClient.issuerVC(claims, issuerPublicKey);
+      return this.everscaleClient.issuerVC(claims, issuerDid);
     } catch (e) {
       throw new BadRequestException(`Could not issue VC to Everscale: ${e.message}`);
     }

@@ -6,7 +6,7 @@ import { TAccountGetOrCreate, TGetOrCreateAccountResult } from "@/modules/graphq
 import { SsoAuthGuard } from "@/modules/authentication/guards/sso-auth.guard";
 import {SignMessageResponse} from "@/modules/graphql-api/vc-storage/types";
 
-@UseGuards(SsoAuthGuard)
+//@UseGuards(SsoAuthGuard)
 @Resolver(of => UsersEntity)
 export class UsersGraphqlApiResolvers {
   constructor(private usersService: UsersGraphqlApiService) {}

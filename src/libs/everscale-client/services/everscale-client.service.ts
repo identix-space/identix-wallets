@@ -8,7 +8,6 @@ import {LoggingService} from "@/libs/logging/services/logging.service";
 import {readFileAsBase64} from "@/libs/common/helpers/files.helpers";
 import {Did} from "../types";
 import {join} from 'path';
-import {faker} from "@faker-js/faker";
 
 const idxVcFabricContractAbi = require('../contracts/vc-management/IdxVcFabric.abi.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 const idxDidDocContractAbi = require('../contracts/did-management/IdxDidDocument.abi.json' ); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -67,7 +66,7 @@ export class EverscaleClientService implements IEverscaleClientService {
 
     this.idxDidRegistryAccount = new Account(idxDidRegistryContract, {
       address: contractsAddresses.idxDidRegistry,
-      signer: signerKeys(everscaleSignerAddresses.didRegistry.keys),
+      signer: signerKeys(everscaleSignerAddresses.idxVcFabric.keys),
       client: this.tonClient
     });
 
@@ -132,16 +131,16 @@ export class EverscaleClientService implements IEverscaleClientService {
   async issuerVC(claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> {
     const claimsGroupsMock = [
       {
-        hmacHigh_claimGroup: this.randomLengthString(64),
-        hmacHigh_groupDid: this.randomLengthString(64),
-        signHighPart: this.randomLengthString(256),
-        signLowPart: this.randomLengthString(256)
+        hmacHigh_claimGroup: String(this.getRandom64()),
+        hmacHigh_groupDid: String(this.getRandom64()),
+        signHighPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
+        signLowPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
       },
       {
-        hmacHigh_claimGroup: this.randomLengthString(64),
-        hmacHigh_groupDid: this.randomLengthString(64),
-        signHighPart: this.randomLengthString(256),
-        signLowPart: this.randomLengthString(256)
+        hmacHigh_claimGroup: String(this.getRandom64()),
+        hmacHigh_groupDid: String(this.getRandom64()),
+        signHighPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
+        signLowPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
       }
     ]
     const issuerPubKeyMock = "8e6d7b90ac4b88d415b1a9f4fb234ed7332076281d432bb93d165284fc816f57"
@@ -157,7 +156,11 @@ export class EverscaleClientService implements IEverscaleClientService {
     return Buffer.from(text, "utf8").toString("base64");
   }
 
-  private randomLengthString(lengthInBits: number): Buffer {
-    return Buffer.from(faker.random.alphaNumeric(30), "utf8").slice(0, lengthInBits / 8);
+  private randomLengthString(lengthInBits: number): string {
+    return "4234123412341234123412341234123413243";
+  }
+
+  private getRandom64() {
+    return 3945411112832729000;
   }
 }
