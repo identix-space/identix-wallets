@@ -1,12 +1,15 @@
 import {LoggingService} from "@/libs/logging/services/logging.service";
 
+export type Did = string;
+
 export type EverscaleClientConfiguration = {
-  everscaleAdminAddressesKeysPath: string;
+  everscaleSignerAddressesPath: string;
   defaultNetwork: string;
   networks: {
     mainnet: string[],
     testnet: string[]
-  }
+  },
+  contractsAddresses: {[key: string]: string}
 }
 
 export const EverscaleClient = 'EVERSCALE_CLIENT';
@@ -18,18 +21,17 @@ export interface IEverscaleClient {
 }
 
 export interface IEverscaleClientsParamsInit {
-  everscaleAdminAddressesKeys: {[key: string]: { public: string, secret: string }};
-  idxVcFabricContractAbiBase64: string;
-  idxVcFabricContractTvcBase64: string;
+  everscaleSignerAddresses: {[key: string]: {address?: string, keys?: { public: string, secret: string }}};
   defaultNetwork: string;
   networks: {
     mainnet: string[],
     testnet: string[]
-  }
+  },
+  contractsAddresses: {[key: string]: string}
 }
 
 export interface IEverscaleClientService {
-  init: (params: IEverscaleClientsParamsInit, logger: LoggingService) => void;
+  init: (params: IEverscaleClientsParamsInit, logger: LoggingService) => Promise<void>;
   generateKeys(): Promise<{public: string, secret: string}>;
   verifySignature(input: {signed: string, message: string, publicKey: string}): Promise<boolean>;
   signMessage(input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}>;

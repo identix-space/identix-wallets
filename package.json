@@ -41,7 +41,7 @@
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "graphql": "^16.3.0",
-    "identix-sso-client-js": "^1.0.4",
+    "identix-sso-client-js": "^1.1.2",
     "js-yaml": "^4.1.0",
     "nestjs-command": "^2.0.0",
     "nestjs-pino": "^1.4.0",

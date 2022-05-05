@@ -59,7 +59,10 @@ export class UsersGraphqlApiService {
     }
 
     const web2Account =
-      await this.web2AccountsRepository.findOne({ authMethod, authIdentifier });
+      await this.web2AccountsRepository.findOne(
+        { authMethod, authIdentifier },
+        {relations: ['user']}
+      );
 
     if (web2Account) {
       const web3Account =
