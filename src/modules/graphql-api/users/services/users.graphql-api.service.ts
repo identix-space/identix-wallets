@@ -140,8 +140,14 @@ export class UsersGraphqlApiService {
    * @private
    */
   private async createDid(publicKey: string): Promise<string> {
-    return this.everscaleClient.issueDidDocument(publicKey);
+    const did = await this.everscaleClient.issueDidDocument(publicKey);
+    if (!did) {
+      throw new BadRequestException('Fail to issuer new Did')
+    }
+
+    return did;
   }
+
 
   /**
    * Creates User, Web2Account (if web2 params exist), Web3Account and DidEntity
