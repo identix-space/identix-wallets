@@ -2,12 +2,13 @@ import {BadRequestException, Inject, Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import {DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity} from "@/libs/database/entities";
-import {TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-api/users/types";
+import { DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity} from "@/libs/database/entities";
+import { TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-api/users/types";
 
-import { faker } from "@faker-js/faker";
-import {Blockchains} from "@/libs/database/types/web3.types";
-import {IEverscaleClient, EverscaleClient} from "@/libs/everscale-client/types";
+import { Blockchains } from "@/libs/database/types/web3.types";
+import { IEverscaleClient, EverscaleClient } from "@/libs/everscale-client/types";
+import { randomString } from "@/libs/common/helpers/random.helpers";
+import { LoggingService } from "@/libs//logging/services/logging.service";
 
 @Injectable()
 export class UsersGraphqlApiService {
@@ -20,7 +21,8 @@ export class UsersGraphqlApiService {
     private web3AccountsRepository: Repository<Web3AccountsEntity>,
     @InjectRepository(DidsEntity)
     private didsRepository: Repository<DidsEntity>,
-    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
+    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient,
+    private logger: LoggingService,
   ) {}
 
   async getOrCreateAccount(params: TAccountGetOrCreate): Promise<TGetOrCreateAccountResult> {
@@ -140,9 +142,17 @@ export class UsersGraphqlApiService {
    * @private
    */
   private async createDid(publicKey: string): Promise<string> {
-    const did = await this.everscaleClient.issueDidDocument(publicKey);
-    if (!did) {
-      throw new BadRequestException('Fail to issuer new Did')
+    let did = `did:identix:${randomString(64)}`;
+
+    try {
+      const everscaleDidAddress = await this.everscaleClient.issueDidDocument(publicKey);
+      if (!everscaleDidAddress) {
+        this.logger.log('Fail to issuer new Did');
+      }
+
+      did = `did:everscale:${everscaleDidAddress}`;
+    } catch (e) {
+      this.logger.log(`Fail to issuer new Did. Error: ${e.message}`);
     }
 
     return did;
