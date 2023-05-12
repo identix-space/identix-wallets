@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import {ClaimsGroup, IEverscaleClientService, IEverscaleClientsParamsInit} from "@/libs/everscale-client/types";
 
-import {Account} from '@tonclient/appkit';
-import {libNode} from '@tonclient/lib-node';
-import {KeyPair, signerKeys, TonClient} from '@tonclient/core';
+import {Account} from '@eversdk/appkit';
+import {libNode} from '@eversdk/lib-node';
+import {signerKeys, TonClient} from '@eversdk/core';
 import {LoggingService} from "@/libs/logging/services/logging.service";
 import {readFileAsBase64} from "@/libs/common/helpers/files.helpers";
 import {Did} from "../types";
@@ -28,11 +28,10 @@ export class EverscaleClientService implements IEverscaleClientService {
       contractsAddresses,
       networks
     } = params;
-
     this.logger = logger;
 
     TonClient.useBinaryLibrary(libNode);
-    this.tonClient = new TonClient({network: {endpoints: networks[defaultNetwork]}});
+    this.tonClient = new TonClient({network: {endpoints: networks[defaultNetwork], access_key: "cc420dce6bdb4e90abe83fed2fead1e2"}});
 
     const pathTvc = join(__dirname, '../contracts/vc-management/IdxVcFabric.tvc');
     const idxVcFabricContract = {
@@ -143,9 +142,9 @@ export class EverscaleClientService implements IEverscaleClientService {
         signLowPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
       }
     ]
-    const issuerPubKeyMock = "8e6d7b90ac4b88d415b1a9f4fb234ed7332076281d432bb93d165284fc816f57"
-
-    const vc = await this.idxVcFabricAdminAccount.run('issueVc', { claims: claimsGroupsMock, issuerPubKey: issuerPubKeyMock});
+    const issuerPubKeyMock = "0xe73cefdc839b7b6ffcb5325d4f0ad8995089924563ed2573036df5877ff1148e";
+    const vc = await this.idxVcFabricAdminAccount.run('issueVc', { answerId: 0, claims: claimsGroupsMock, issuerPubKey: issuerPubKeyMock});
+    console.log(vc);
     const vcDidAddress = vc.decoded?.output.vcAddress;
     await this.idxDidRegistryAccount.free();
 

@@ -461,6 +461,23 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@eversdk/appkit@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@eversdk/appkit/-/appkit-0.3.6.tgz#f98e0d1636750f118c2b6ded0577dece5cec8f73"
+  integrity sha512-1j8Snx+Tpy7HwSO0g2VB6MduynVIeft7RGwPHJztX7MMU28v6Q1lp5SoUaB7veGnbbby7AVpdDhdoHasKYBI9Q==
+  dependencies:
+    "@eversdk/core" "^1.38.1"
+
+"@eversdk/core@^1.38.1", "@eversdk/core@^1.42.1":
+  version "1.42.1"
+  resolved "https://registry.yarnpkg.com/@eversdk/core/-/core-1.42.1.tgz#647aababd871c2b694a515608f1fabd37e856388"
+  integrity sha512-Wm93n/t6rBhGmbkV7OEsB+/DAD5OfCNOyhNARPWqBmjNLiamHLhzsO8LC293WM2Z4UxT9N0Gp4PsL2V6mrliaA==
+
+"@eversdk/lib-node@^1.42.1":
+  version "1.42.1"
+  resolved "https://registry.yarnpkg.com/@eversdk/lib-node/-/lib-node-1.42.1.tgz#896cf08c11a5f3593e89e9f11df637a98757f929"
+  integrity sha512-STLOP500pwGOrxeL/zkBG7Zscwc4BkTdDVqJ7pswPcfrWq5FBuk9H2nolXjQ85RZHF9eisGH9WBVSddHmzR1eg==
+
 "@faker-js/faker@^6.1.2":
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-6.1.2.tgz#7093ea65e6d78eae388918a46968c083366bd621"

@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "@apollo/gateway": "^0.50.0",
+    "@eversdk/appkit": "^0.3.6",
+    "@eversdk/core": "^1.42.1",
+    "@eversdk/lib-node": "^1.42.1",
     "@faker-js/faker": "^6.1.2",
     "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "^7.6.5",

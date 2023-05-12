@@ -1,8 +1,8 @@
-pragma ton-solidity >= 0.58.2;
+pragma ton-solidity = 0.61.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "IdxVc_type1.sol";
+import "vc-management/IdxVc_type1.sol";
 
 contract Issuer 
 {
@@ -24,6 +24,7 @@ contract Issuer
         public externalMsg view responsible
         returns (address vcAddress)
     {
+        require(isController(msg.pubkey()), Errors.MessageSenderIsNotController);
         require(claims.length > 0, Errors.InvalidArgument);
         tvm.accept();
         // for (uint i = 0; i < claims.length; ++i) 
@@ -76,8 +77,14 @@ contract Issuer
     ////// Access //////
     modifier checkAccessAndAccept() 
     {
-        require(msg.pubkey() == _idxControllerPubKey, Errors.MessageSenderIsNotController);
+        require(isController(msg.pubkey()), Errors.MessageSenderIsNotController);
         tvm.accept();
         _;
+    }
+
+    function isController(uint256 pubkey)
+        private view returns (bool)
+    {
+        return pubkey == _idxControllerPubKey;
     }
 }
