@@ -15,7 +15,7 @@ export class VcStorageGraphqlApiResolvers {
 
   @Mutation(returns => String)
   async issueVC(
-    @Args("id", { type: () => Number }) id: number
+    @Args("id", { type: () => Int }) id: number
   ) {
     return this.vcStorageService.issueVC(id);
   }
