@@ -14,11 +14,10 @@ export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}
 
   @Mutation(returns => String)
-  async issuerVC(
-    @Args("claims", { type: () => [ClaimsGroup] }) claims: ClaimsGroup[],
-    @Args("issuerDid", { type: () => String }) issuerDid: string
+  async issueVC(
+    @Args("id", { type: () => Number }) id: number
   ) {
-    return this.vcStorageService.issuerVC(claims, issuerDid);
+    return this.vcStorageService.issueVC(id);
   }
 
   @Mutation(returns => VcStorageEntity)

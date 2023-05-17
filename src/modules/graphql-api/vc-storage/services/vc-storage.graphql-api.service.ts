@@ -27,21 +27,17 @@ export class VcStorageGraphqlApiService {
    * @param claims
    * @param issuerPublicKey
    */
-  async issuerVC(claims: ClaimsGroup[], issuerDid: string): Promise<Did> {
+  async issueVC(id: number): Promise<Did> {
     try {
-      const didEntry = await this.didsRepository.findOne(
-        {
-          where: { did: issuerDid },
-          relations: ['web3Account']
-        });
+      const VC = await this.vcStorageRepository.findOne({
+        where: {id: id}
+      });
 
-      if (!didEntry) {
-        throw new BadRequestException(`Account not found`);
+      if (!VC) {
+        throw new BadRequestException(`VC not found`);
       }
 
-      const issuerPublicKey = didEntry.web3Account.publicKey;
-
-      return this.everscaleClient.issuerVC(claims, issuerDid);
+      return this.everscaleClient.issueVC([{hmacHigh_claimGroup: "", hmacHigh_groupDid: "", signHighPart: "", signLowPart: ""}], VC.issuerDid);
     } catch (e) {
       throw new BadRequestException(`Could not issue VC to Everscale: ${e.message}`);
     }

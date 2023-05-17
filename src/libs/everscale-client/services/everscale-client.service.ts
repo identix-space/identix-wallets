@@ -127,7 +127,7 @@ export class EverscaleClientService implements IEverscaleClientService {
     return newDidAddress;
   }
 
-  async issuerVC(claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> {
+  async issueVC(claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> {
     const claimsGroupsMock = [
       {
         hmacHigh_claimGroup: String(this.getRandom64()),
