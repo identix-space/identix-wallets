@@ -63,16 +63,16 @@ export class VcStorageGraphqlApiService {
     return vc;
   }
 
-  async getUserVCs(userDid: Did, page: number, limit: number): Promise<VcStorageEntity[]> {
+  async getUserVCs(userDid: Did, vcType: string, page: number, limit: number): Promise<VcStorageEntity[]> {
     const VCs = await this.vcStorageRepository.find({
-          where: { holderDid: userDid },
+          where: { holderDid: userDid},
           relations: ['verificationCases'],
           take: limit,
           skip: (page * limit) - limit
         }
       );
 
-    return VCs;
+    return VCs.filter(cV => JSON.parse(cV.vcData).vcTypeDid === vcType);
   }
 
   async findVcByDid(vcDid: Did): Promise<VcStorageEntity> {
