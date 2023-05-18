@@ -63,49 +63,16 @@ export class VcStorageGraphqlApiService {
     return vc;
   }
 
-  async getUserVCs(userDid: Did): Promise<VcStorageEntity[]> {
-    const userVCs: Map<string, VcStorageEntity> = new Map<string, VcStorageEntity>();
-
-    const userAsIssuerVCs = await this.vcStorageRepository.find({
-          where: { issuerDid: userDid },
-          relations: ['verificationCases']
+  async getUserVCs(userDid: Did, page: number, limit: number): Promise<VcStorageEntity[]> {
+    const VCs = await this.vcStorageRepository.find({
+          where: { holder: userDid },
+          relations: ['verificationCases'],
+          take: limit,
+          skip: (page * limit) - limit
         }
       );
 
-    if (userAsIssuerVCs && userAsIssuerVCs.length > 0) {
-      for (const vc of userAsIssuerVCs) {
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    const userAsHolderVCs = await this.vcStorageRepository.find({
-        where: { holderDid: userDid },
-        relations: ['verificationCases']
-      }
-    );
-
-    if (userAsHolderVCs && userAsHolderVCs.length > 0) {
-      for (const vc of userAsHolderVCs) {
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    const userAsVerifierVerificationCases = await this.vcVerificationCasesRepository.find({
-      where: { verifierDid: userDid },
-      relations: ['vc']
-    });
-
-    if (userAsVerifierVerificationCases && userAsVerifierVerificationCases.length > 0) {
-      for await (const vcs of userAsVerifierVerificationCases) {
-        const vc = await this.vcStorageRepository.findOne(vcs.vc.id, {
-          relations: ['verificationCases']
-        })
-
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    return Array.from(userVCs.values());
+    return VCs;
   }
 
   async findVcByDid(vcDid: Did): Promise<VcStorageEntity> {
