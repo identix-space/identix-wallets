@@ -65,7 +65,7 @@ export class VcStorageGraphqlApiService {
 
   async getUserVCs(userDid: Did, page: number, limit: number): Promise<VcStorageEntity[]> {
     const VCs = await this.vcStorageRepository.find({
-          where: { holder: userDid },
+          where: { holderDid: userDid },
           relations: ['verificationCases'],
           take: limit,
           skip: (page * limit) - limit
