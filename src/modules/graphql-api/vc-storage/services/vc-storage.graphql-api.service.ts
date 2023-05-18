@@ -72,7 +72,7 @@ export class VcStorageGraphqlApiService {
         }
       );
 
-    return VCs.filter(cV => JSON.parse(cV.vcData).vcTypeDid === vcType);
+    return vcType ? VCs.filter(cV => JSON.parse(cV.vcData).vcTypeDid === vcType) : VCs;
   }
 
   async findVcByDid(vcDid: Did): Promise<VcStorageEntity> {
