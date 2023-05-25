@@ -65,8 +65,8 @@ async function everscaleClientFactory(
     signMessage: async (input: {message: string, keys: {public: string, secret: string}}): Promise<{signed: string, signature: string}> => {
       return everscaleClient.signMessage(input);
     },
-    issuerVC: async (claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> => {
-      return everscaleClient.issuerVC(claims, issuerPubKey);
+    issueVC: async (claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> => {
+      return everscaleClient.issueVC(claims, issuerPubKey);
     },
     issueDidDocument: async (publicKey: string): Promise<Did> => {
       return everscaleClient.issueDidDocument(publicKey);

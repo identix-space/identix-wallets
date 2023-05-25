@@ -27,21 +27,17 @@ export class VcStorageGraphqlApiService {
    * @param claims
    * @param issuerPublicKey
    */
-  async issuerVC(claims: ClaimsGroup[], issuerDid: string): Promise<Did> {
+  async issueVC(id: number): Promise<Did> {
     try {
-      const didEntry = await this.didsRepository.findOne(
-        {
-          where: { did: issuerDid },
-          relations: ['web3Account']
-        });
+      const VC = await this.vcStorageRepository.findOne({
+        where: {id: id}
+      });
 
-      if (!didEntry) {
-        throw new BadRequestException(`Account not found`);
+      if (!VC) {
+        throw new BadRequestException(`VC not found`);
       }
 
-      const issuerPublicKey = didEntry.web3Account.publicKey;
-
-      return this.everscaleClient.issuerVC(claims, issuerDid);
+      return this.everscaleClient.issueVC([{hmacHigh_claimGroup: "", hmacHigh_groupDid: "", signHighPart: "", signLowPart: ""}], VC.issuerDid);
     } catch (e) {
       throw new BadRequestException(`Could not issue VC to Everscale: ${e.message}`);
     }
@@ -67,49 +63,16 @@ export class VcStorageGraphqlApiService {
     return vc;
   }
 
-  async getUserVCs(userDid: Did): Promise<VcStorageEntity[]> {
-    const userVCs: Map<string, VcStorageEntity> = new Map<string, VcStorageEntity>();
-
-    const userAsIssuerVCs = await this.vcStorageRepository.find({
-          where: { issuerDid: userDid },
-          relations: ['verificationCases']
+  async getUserVCs(userDid: Did, vcType: string, page: number, limit: number): Promise<VcStorageEntity[]> {
+    const VCs = await this.vcStorageRepository.find({
+          where: { holderDid: userDid},
+          relations: ['verificationCases'],
+          take: limit,
+          skip: (page * limit) - limit
         }
       );
 
-    if (userAsIssuerVCs && userAsIssuerVCs.length > 0) {
-      for (const vc of userAsIssuerVCs) {
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    const userAsHolderVCs = await this.vcStorageRepository.find({
-        where: { holderDid: userDid },
-        relations: ['verificationCases']
-      }
-    );
-
-    if (userAsHolderVCs && userAsHolderVCs.length > 0) {
-      for (const vc of userAsHolderVCs) {
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    const userAsVerifierVerificationCases = await this.vcVerificationCasesRepository.find({
-      where: { verifierDid: userDid },
-      relations: ['vc']
-    });
-
-    if (userAsVerifierVerificationCases && userAsVerifierVerificationCases.length > 0) {
-      for await (const vcs of userAsVerifierVerificationCases) {
-        const vc = await this.vcStorageRepository.findOne(vcs.vc.id, {
-          relations: ['verificationCases']
-        })
-
-        userVCs.set(vc.vcDid, vc);
-      }
-    }
-
-    return Array.from(userVCs.values());
+    return vcType ? VCs.filter(cV => JSON.parse(cV.vcData).vcTypeDid === vcType) : VCs;
   }
 
   async findVcByDid(vcDid: Did): Promise<VcStorageEntity> {

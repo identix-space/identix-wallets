@@ -14,11 +14,10 @@ export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}
 
   @Mutation(returns => String)
-  async issuerVC(
-    @Args("claims", { type: () => [ClaimsGroup] }) claims: ClaimsGroup[],
-    @Args("issuerDid", { type: () => String }) issuerDid: string
+  async issueVC(
+    @Args("id", { type: () => Int }) id: number
   ) {
-    return this.vcStorageService.issuerVC(claims, issuerDid);
+    return this.vcStorageService.issueVC(id);
   }
 
   @Mutation(returns => VcStorageEntity)
@@ -33,8 +32,13 @@ export class VcStorageGraphqlApiResolvers {
   }
 
   @Query(returns => [VcStorageEntity])
-  async getUserVCs(@Args("userDid", { type: () => String }) userDid: Did): Promise<VcStorageEntity[]> {
-    return this.vcStorageService.getUserVCs(userDid);
+  async getUserVCs(
+    @Args("userDid", { type: () => String }) userDid: Did,
+    @Args("vcType", { type: () => String, nullable: true }) vcType?: string,
+    @Args("page", { type: () => Int, nullable: true }) page?: number,
+    @Args("limit", { type: () => Int, nullable: true }) limit?: number
+  ): Promise<VcStorageEntity[]> {
+    return this.vcStorageService.getUserVCs(userDid, vcType, page, limit);
   }
 
   @Query(returns => VcStorageEntity)

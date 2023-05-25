@@ -12,5 +12,5 @@ export default registerAs('everscale-client-configuration', (): EverscaleClientC
     idxVcFabric: process.env.IDX_VC_FABRIC_CONTRACT_ADDRESS,
     idxDidDoc: process.env.IDX_DID_DOCUMENT_CONTRACT_ADDRESS,
     idxDidRegistry: process.env.IDX_DID_REGISTRY_CONTRACT_ADDRESS
-  }
+  },
 }));
