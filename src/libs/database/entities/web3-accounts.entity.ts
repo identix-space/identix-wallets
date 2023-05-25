@@ -20,6 +20,7 @@ export class Web3AccountsEntity {
   @ManyToOne(
     () => UsersEntity,
     user => user.web3Accounts,
+    { onDelete: 'CASCADE' }
   )
   @Field(type => UsersEntity)
   public user: UsersEntity;
@@ -45,6 +46,7 @@ export class Web3AccountsEntity {
   @OneToMany(
     () => DidsEntity,
     did => did.web3Account,
+    { onDelete: 'CASCADE' }
   )
   public dids: DidsEntity[]
 
@@ -70,7 +72,7 @@ export class Web3AccountsEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -79,7 +81,7 @@ export class Web3AccountsEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public updatedAt: Date;

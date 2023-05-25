@@ -27,6 +27,7 @@ export class DidsEntity {
   @ManyToOne(
     () => Web3AccountsEntity,
     w3acc => w3acc.dids,
+    { onDelete: 'CASCADE' }
   )
   @Field(type => Web3AccountsEntity)
   public web3Account: Web3AccountsEntity;
@@ -35,7 +36,7 @@ export class DidsEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -44,7 +45,7 @@ export class DidsEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public updatedAt: Date;
