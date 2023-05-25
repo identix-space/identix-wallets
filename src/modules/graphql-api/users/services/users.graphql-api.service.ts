@@ -85,6 +85,20 @@ export class UsersGraphqlApiService {
     return { dids: [didEntity.did] };
   }
 
+  async deleteAccountByDid(accountDid: string): Promise<boolean> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account', 'web3Account.user']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    return await this.deleteById(didEntry.web3Account.user.id);  
+  }
+
   async findById(id: number): Promise<UsersEntity> {
     return this.usersRepository.findOne(id);
   }
