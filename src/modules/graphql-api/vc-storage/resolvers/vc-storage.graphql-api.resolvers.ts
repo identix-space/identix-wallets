@@ -35,11 +35,9 @@ export class VcStorageGraphqlApiResolvers {
   @Query(returns => [VcStorageEntity])
   async getUserVCs(
     @Args("userDid", { type: () => String }) userDid: Did,
-    @Args("vcType", { type: () => String, nullable: true }) vcType?: string,
-    @Args("page", { type: () => Int, nullable: true }) page?: number,
-    @Args("limit", { type: () => Int, nullable: true }) limit?: number
+    @Args("vcType", { type: () => String, nullable: true }) vcType?: string
   ): Promise<VcStorageEntity[]> {
-    return this.vcStorageService.getUserVCs(userDid, vcType, page, limit);
+    return this.vcStorageService.getUserVCs(userDid, vcType);
   }
 
   @Query(returns => VcStorageEntity)
