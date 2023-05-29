@@ -19,6 +19,7 @@ export class Web2AccountsEntity {
   @ManyToOne(
     () => UsersEntity,
     user => user.web2Accounts,
+    { onDelete: 'CASCADE' }
   )
   @Field(type => UsersEntity)
   public user: UsersEntity;
@@ -45,7 +46,7 @@ export class Web2AccountsEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => 'CURRENT_TIMESTAMP'
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -54,7 +55,7 @@ export class Web2AccountsEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => 'CURRENT_TIMESTAMP'
   })
   @Field({ nullable: false })
   public updatedAt: Date;

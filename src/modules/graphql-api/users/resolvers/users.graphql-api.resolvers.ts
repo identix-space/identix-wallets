@@ -30,6 +30,11 @@ export class UsersGraphqlApiResolvers {
     return this.usersService.createDid(publicKey);
   }
 
+  @Mutation(returns => Boolean)
+  async deleteAccountByDid(@Args("accountDid", { type: () => String }) accountDid: string) {
+    return this.usersService.deleteAccountByDid(accountDid);
+  }
+
   @Mutation(returns => SignMessageResponse)
   async signMessage(
     @Args("accountDid", { type: () => String }) accountDid: string,

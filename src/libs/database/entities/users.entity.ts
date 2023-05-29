@@ -29,7 +29,7 @@ export class UsersEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -38,7 +38,7 @@ export class UsersEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public updatedAt: Date;
@@ -46,12 +46,14 @@ export class UsersEntity {
   @OneToMany(
     () => Web2AccountsEntity,
     w2acc => w2acc.user,
+    { onDelete: 'CASCADE' }
   )
   public web2Accounts: Web2AccountsEntity[]
 
   @OneToMany(
     () => Web3AccountsEntity,
     w3acc => w3acc.user,
+    { onDelete: 'CASCADE' }
   )
   public web3Accounts: Web3AccountsEntity[]
 }
