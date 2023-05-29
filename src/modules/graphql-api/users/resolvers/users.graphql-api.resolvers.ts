@@ -23,6 +23,13 @@ export class UsersGraphqlApiResolvers {
     return this.usersService.deleteById(id);
   }
 
+  @Mutation(returns => String)
+  async createDid(
+    @Args("publicKey", { type: () => String }) publicKey: string
+  ) {
+    return this.usersService.createDid(publicKey);
+  }
+
   @Mutation(returns => SignMessageResponse)
   async signMessage(
     @Args("accountDid", { type: () => String }) accountDid: string,

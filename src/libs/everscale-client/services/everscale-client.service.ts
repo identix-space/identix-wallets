@@ -128,23 +128,7 @@ export class EverscaleClientService implements IEverscaleClientService {
   }
 
   async issueVC(claims: ClaimsGroup[], issuerPubKey: string): Promise<Did> {
-    const claimsGroupsMock = [
-      {
-        hmacHigh_claimGroup: String(this.getRandom64()),
-        hmacHigh_groupDid: String(this.getRandom64()),
-        signHighPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
-        signLowPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
-      },
-      {
-        hmacHigh_claimGroup: String(this.getRandom64()),
-        hmacHigh_groupDid: String(this.getRandom64()),
-        signHighPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
-        signLowPart: [this.getRandom64(), this.getRandom64(), this.getRandom64(), this.getRandom64()].join(''),
-      }
-    ]
-    const issuerPubKeyMock = "0xe73cefdc839b7b6ffcb5325d4f0ad8995089924563ed2573036df5877ff1148e";
-    const vc = await this.idxVcFabricAdminAccount.run('issueVc', { answerId: 0, claims: claimsGroupsMock, issuerPubKey: issuerPubKeyMock});
-    console.log(vc);
+    const vc = await this.idxVcFabricAdminAccount.run('issueVc', { answerId: 0, claims: claims, issuerPubKey: `0x${issuerPubKey}`});
     const vcDidAddress = vc.decoded?.output.vcAddress;
     await this.idxDidRegistryAccount.free();
 
@@ -153,13 +137,5 @@ export class EverscaleClientService implements IEverscaleClientService {
 
   private text2base64(text: string): string {
     return Buffer.from(text, "utf8").toString("base64");
-  }
-
-  private randomLengthString(lengthInBits: number): string {
-    return "4234123412341234123412341234123413243";
-  }
-
-  private getRandom64() {
-    return 3945411112832729000;
   }
 }

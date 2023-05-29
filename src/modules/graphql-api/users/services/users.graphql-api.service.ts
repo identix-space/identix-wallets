@@ -141,18 +141,19 @@ export class UsersGraphqlApiService {
    * @param publicKey
    * @private
    */
-  private async createDid(publicKey: string): Promise<string> {
+  async createDid(publicKey: string): Promise<string> {
     let did = `did:identix:${randomString(64)}`;
 
     try {
       const everscaleDidAddress = await this.everscaleClient.issueDidDocument(publicKey);
       if (!everscaleDidAddress) {
-        this.logger.log('Fail to issuer new Did');
+        this.logger.log('Fail to issue new Did');
       }
 
       did = `did:everscale:${everscaleDidAddress}`;
     } catch (e) {
-      this.logger.log(`Fail to issuer new Did. Error: ${e.message}`);
+      this.logger.log(`Fail to issue new Did. Error: ${e.message}`);
+      return e;
     }
 
     return did;

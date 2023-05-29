@@ -1,11 +1,12 @@
-import {BadRequestException, Inject, Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
-import {Did} from "@/libs/common/types/ssi.types";
-import {DidsEntity, UsersEntity, VcStorageEntity, VcVerificationCasesEntity} from "@/libs/database/entities";
-import {TVCStorageCreate} from "@/modules/graphql-api/vc-storage/types";
-import {VcVerificationStatusType} from "@/libs/database/types/vc-status.type";
-import {ClaimsGroup, EverscaleClient, IEverscaleClient} from "@/libs/everscale-client/types";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Did } from "@/libs/common/types/ssi.types";
+import { DidsEntity, UsersEntity, VcStorageEntity, VcVerificationCasesEntity } from "@/libs/database/entities";
+import { TVCStorageCreate } from "@/modules/graphql-api/vc-storage/types";
+import { VcVerificationStatusType } from "@/libs/database/types/vc-status.type";
+import { ClaimsGroup, EverscaleClient, IEverscaleClient } from "@/libs/everscale-client/types";
+import { ThrowStatement } from "ts-morph";
 
 @Injectable()
 export class VcStorageGraphqlApiService {
@@ -19,7 +20,7 @@ export class VcStorageGraphqlApiService {
     @InjectRepository(DidsEntity)
     private didsRepository: Repository<DidsEntity>,
     @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
-  ) {}
+  ) { }
 
   /**
    * Issues VC in Everscale blockchain
@@ -27,19 +28,17 @@ export class VcStorageGraphqlApiService {
    * @param claims
    * @param issuerPublicKey
    */
-  async issueVC(id: number): Promise<Did> {
+  async issueVC(claimsGroups: ClaimsGroup[], issuerDid: Did): Promise<Did> {
     try {
-      const VC = await this.vcStorageRepository.findOne({
-        where: {id: id}
+      const did = await this.didsRepository.findOne({
+        where: { did: issuerDid },
+        relations: ['web3Account']
       });
+      if (!did && !did.web3Account) throw new BadRequestException(`Issuer not found`);
 
-      if (!VC) {
-        throw new BadRequestException(`VC not found`);
-      }
-
-      return this.everscaleClient.issueVC([{hmacHigh_claimGroup: "", hmacHigh_groupDid: "", signHighPart: "", signLowPart: ""}], VC.issuerDid);
+      return this.everscaleClient.issueVC(claimsGroups, did.web3Account.publicKey);
     } catch (e) {
-      throw new BadRequestException(`Could not issue VC to Everscale: ${e.message}`);
+      throw new BadRequestException(`Could not issue VC to Venom: ${e.message}`);
     }
   }
 
@@ -65,12 +64,12 @@ export class VcStorageGraphqlApiService {
 
   async getUserVCs(userDid: Did, vcType: string, page: number, limit: number): Promise<VcStorageEntity[]> {
     const VCs = await this.vcStorageRepository.find({
-          where: { holderDid: userDid},
-          relations: ['verificationCases'],
-          take: limit,
-          skip: (page * limit) - limit
-        }
-      );
+      where: { holderDid: userDid },
+      relations: ['verificationCases'],
+      take: limit,
+      skip: (page * limit) - limit
+    }
+    );
 
     return vcType ? VCs.filter(cV => JSON.parse(cV.vcData).vcTypeDid === vcType) : VCs;
   }
@@ -99,11 +98,11 @@ export class VcStorageGraphqlApiService {
     }
 
     let vcVerificationCase = (await this.vcVerificationCasesRepository.find({
-        where: { verifierDid, vc: { vcDid } },
-        relations: ['vc']
-      })).shift();
+      where: { verifierDid, vc: { vcDid } },
+      relations: ['vc']
+    })).shift();
     if (vcVerificationCase) {
-      throw new Error(`The verification case already exists. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+      throw new Error(`The verification case already exists. Params: ${JSON.stringify({ vcDid, verifierDid })}`);
     }
 
     vcVerificationCase = new VcVerificationCasesEntity();
@@ -124,15 +123,15 @@ export class VcStorageGraphqlApiService {
     }
 
     const vcVerificationCase = (await this.vcVerificationCasesRepository.find({
-        where: { verifierDid, vc: { vcDid } },
-        relations: ['vc']
-      })).shift();
+      where: { verifierDid, vc: { vcDid } },
+      relations: ['vc']
+    })).shift();
     if (!vcVerificationCase) {
-      throw new Error(`The verification case does not exist. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+      throw new Error(`The verification case does not exist. Params: ${JSON.stringify({ vcDid, verifierDid })}`);
     }
 
     if (vcVerificationCase.verificationStatus !== VcVerificationStatusType.PendingVerify) {
-      throw new Error(`The verification case has already been verified. Params: ${JSON.stringify({vcDid, verifierDid})}`);
+      throw new Error(`The verification case has already been verified. Params: ${JSON.stringify({ vcDid, verifierDid })}`);
     }
 
     vcVerificationCase.verificationStatus = verificationStatus;
@@ -150,7 +149,7 @@ export class VcStorageGraphqlApiService {
           where: { vc: { vcDid: vc.vcDid } },
           relations: ['vc']
         }))
-        .map(vfc => ({ verifierDid: vfc.verifierDid, verificationStatus: vfc.verificationStatus }));
+          .map(vfc => ({ verifierDid: vfc.verifierDid, verificationStatus: vfc.verificationStatus }));
 
       const vcDataObj = JSON.parse(vc.vcData);
       vcDataObj.verificationCases = vcVerificationCases;
