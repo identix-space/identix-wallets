@@ -57,11 +57,10 @@ export class VcStorageGraphqlApiResolvers {
     return this.vcStorageService.requestVcVerification(vcDid, verifierDid);
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => VcStorageEntity, {nullable: true})
   async verifyVc(
-    @Args("vcDid", { type: () => String! }) vcDid: Did,
-    @Args("verifierDid", { type: () => String! }) verifierDid: Did,
-    @Args("verificationStatus", { type: () => String! }) verificationStatus: VcVerificationStatusType) {
-    return this.vcStorageService.verifyVc(vcDid, verifierDid, verificationStatus);
+    @Args("userDid", { type: () => String! }) userDid: Did,
+    @Args("titledid", { type: () => String! }) titledid: Did) {
+    return this.vcStorageService.verifyVc(userDid, titledid);
   }
 }
