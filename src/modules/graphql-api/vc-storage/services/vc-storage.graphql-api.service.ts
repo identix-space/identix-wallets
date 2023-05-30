@@ -116,30 +116,19 @@ export class VcStorageGraphqlApiService {
     return true;
   }
 
-  async verifyVc(vcDid: Did, verifierDid: Did, verificationStatus: VcVerificationStatusType): Promise<boolean> {
-    const vc = await this.vcStorageRepository.findOne({ vcDid });
-    if (!vc) {
-      throw new Error('VC not found');
-    }
+  async verifyVc(userDid: Did, titledid: string): Promise<VcStorageEntity> {
+    const VCs = await this.vcStorageRepository.find({
+      where: { holderDid: userDid },
+      relations: ['verificationCases']
+    });
 
-    const vcVerificationCase = (await this.vcVerificationCasesRepository.find({
-      where: { verifierDid, vc: { vcDid } },
-      relations: ['vc']
-    })).shift();
-    if (!vcVerificationCase) {
-      throw new Error(`The verification case does not exist. Params: ${JSON.stringify({ vcDid, verifierDid })}`);
-    }
+    const verifiedVC = VCs.find(cV => {
+      const {vcParams} = JSON.parse(cV.vcData);
+      const data = JSON.parse(vcParams);
+      return data.titledeedid === titledid;
+    });
 
-    if (vcVerificationCase.verificationStatus !== VcVerificationStatusType.PendingVerify) {
-      throw new Error(`The verification case has already been verified. Params: ${JSON.stringify({ vcDid, verifierDid })}`);
-    }
-
-    vcVerificationCase.verificationStatus = verificationStatus;
-    await this.vcVerificationCasesRepository.save(vcVerificationCase)
-
-    await this.refreshVc(vc);
-
-    return true;
+    return verifiedVC;
   }
 
   async refreshVc(vc: VcStorageEntity): Promise<void> {
