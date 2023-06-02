@@ -164,7 +164,7 @@ export class UsersGraphqlApiService {
         this.logger.log('Fail to issue new Did');
       }
 
-      did = `did:everscale:${everscaleDidAddress}`;
+      did = `did:venomid:${everscaleDidAddress}`;
     } catch (e) {
       this.logger.log(`Fail to issue new Did. Error: ${e.message}`);
       return e;
