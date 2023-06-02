@@ -13,5 +13,5 @@ export const did = () => {
   for(let i = 0; i < 64; i++) {
     address.push(alphaBettaNumber[Math.floor( Math.random()*(alphaBettaNumber.length-1))])
   }
-  return `did:ever:0:${address.join('')}`;
+  return `did:venom:0:${address.join('')}`;
 }
