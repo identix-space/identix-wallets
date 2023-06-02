@@ -11,14 +11,7 @@ export class GraphQLAppModule {
       imports: [
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
-          autoSchemaFile: true,
-          formatError: (error: GraphQLError) => {
-            const graphQLFormattedError: GraphQLFormattedError = {
-              message: error?.message
-            };
-
-            return graphQLFormattedError;
-          },
+          autoSchemaFile: true
         })
       ],
       providers: [],
