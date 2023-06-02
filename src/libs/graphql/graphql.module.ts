@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { GraphQLError, GraphQLFormattedError } from "graphql";
 
 @Module({})
 export class GraphQLAppModule {
@@ -10,7 +11,14 @@ export class GraphQLAppModule {
       imports: [
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
-          autoSchemaFile: true
+          autoSchemaFile: true,
+          formatError: (error: GraphQLError) => {
+            const graphQLFormattedError: GraphQLFormattedError = {
+              message: error?.message
+            };
+
+            return graphQLFormattedError;
+          },
         })
       ],
       providers: [],
