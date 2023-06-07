@@ -14,11 +14,11 @@ export class VcStorageGraphqlApiResolvers {
   constructor(private vcStorageService: VcStorageGraphqlApiService) {}
 
   @Mutation(returns => String)
-  async issuerVC(
-    @Args("claims", { type: () => [ClaimsGroup] }) claims: ClaimsGroup[],
+  async issueVC(
+    @Args("claimsGroup", { type: () => [ClaimsGroup] }) claimsGroup: ClaimsGroup[],
     @Args("issuerDid", { type: () => String }) issuerDid: string
   ) {
-    return this.vcStorageService.issuerVC(claims, issuerDid);
+    return this.vcStorageService.issueVC(claimsGroup, issuerDid);
   }
 
   @Mutation(returns => VcStorageEntity)
@@ -33,8 +33,11 @@ export class VcStorageGraphqlApiResolvers {
   }
 
   @Query(returns => [VcStorageEntity])
-  async getUserVCs(@Args("userDid", { type: () => String }) userDid: Did): Promise<VcStorageEntity[]> {
-    return this.vcStorageService.getUserVCs(userDid);
+  async getUserVCs(
+    @Args("userDid", { type: () => String }) userDid: Did,
+    @Args("vcType", { type: () => String, nullable: true }) vcType?: string
+  ): Promise<VcStorageEntity[]> {
+    return this.vcStorageService.getUserVCs(userDid, vcType);
   }
 
   @Query(returns => VcStorageEntity)
@@ -54,11 +57,10 @@ export class VcStorageGraphqlApiResolvers {
     return this.vcStorageService.requestVcVerification(vcDid, verifierDid);
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => VcStorageEntity, {nullable: true})
   async verifyVc(
-    @Args("vcDid", { type: () => String! }) vcDid: Did,
-    @Args("verifierDid", { type: () => String! }) verifierDid: Did,
-    @Args("verificationStatus", { type: () => String! }) verificationStatus: VcVerificationStatusType) {
-    return this.vcStorageService.verifyVc(vcDid, verifierDid, verificationStatus);
+    @Args("userDid", { type: () => String! }) userDid: Did,
+    @Args("titledid", { type: () => String! }) titledid: Did) {
+    return this.vcStorageService.verifyVc(userDid, titledid);
   }
 }

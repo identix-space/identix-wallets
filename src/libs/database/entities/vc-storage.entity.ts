@@ -1,7 +1,7 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import {Field, Int, ObjectType} from "@nestjs/graphql";
-import {VcVerificationCasesEntity} from "@/libs/database/entities/vc-verifier-cases.entity";
-import {Did} from "@/libs/common/types/ssi.types";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { VcVerificationCasesEntity } from "@/libs/database/entities/vc-verifier-cases.entity";
+import { Did } from "@/libs/common/types/ssi.types";
 
 @Entity("vc-storage")
 @ObjectType()
@@ -22,8 +22,7 @@ export class VcStorageEntity {
 
   @Column({
     name: "vcData",
-    type: "varchar",
-    length: 1024,
+    type: "text",
     nullable: false
   })
   @Field({ nullable: false })
@@ -68,7 +67,7 @@ export class VcStorageEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -77,7 +76,7 @@ export class VcStorageEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: () => "CURRENT_TIMESTAMP"
   })
   @Field({ nullable: false })
   public updatedAt: Date;

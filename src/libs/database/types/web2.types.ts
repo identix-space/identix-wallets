@@ -6,7 +6,8 @@ export enum Web2AuthenticationMethods {
   google = 'google',
   facebook = 'facebook',
   twitter = 'twitter',
-  telegram = 'telegram'
+  telegram = 'telegram',
+  evmAddress = 'evmAddress'
 }
 
 registerEnumType(Web2AuthenticationMethods, {

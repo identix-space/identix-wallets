@@ -1,14 +1,14 @@
-pragma ton-solidity >= 0.58.2;
+pragma ton-solidity >= 0.58.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
 import "../libraries/Errors.sol";
-import "../libraries/Aux.sol";
+import "../libraries/AuxLib.sol";
 import "../libraries/Gas.sol";
 import "../interfaces/IIdxDidDocument.sol";
-import "IdxDidDocument.sol";
+import "../did-management/IdxDidDocument.sol";
 
-contract IdxSsoDidRegistry 
+contract IdxDidRegistry
 {
     TvmCell private _didDocTemplateCode;
     uint256 private _idxControllerPubKey;
@@ -22,7 +22,7 @@ contract IdxSsoDidRegistry
         tvm.accept();
         _idxControllerPubKey = msg.pubkey();
         _didDocTemplateCode = tplCode;
-        codeVer = 0x0010;
+        codeVer = 0x0011;
     }
 
     ////// Document management //////
@@ -66,7 +66,7 @@ contract IdxSsoDidRegistry
 
         _dids[didController].push(addr);
         
-        return (addr);
+        return {value: 0, bounce: false, flag: 64} (addr);
     }
 
     function getDidDocs(address controller)
@@ -89,7 +89,7 @@ contract IdxSsoDidRegistry
 
         address[] result;
         result = _dids[controller];
-        return result;
+        return {value: 0, bounce: false, flag: 64} result;
     }
 
     ////// Templating //////

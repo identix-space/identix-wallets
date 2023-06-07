@@ -39,7 +39,7 @@ export class VcVerificationCasesEntity {
     name: "createdAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: new Date()
   })
   @Field({ nullable: false })
   public createdAt: Date;
@@ -48,7 +48,7 @@ export class VcVerificationCasesEntity {
     name: "updatedAt",
     type: "timestamp",
     nullable: true,
-    default: "CURRENT_TIMESTAMP"
+    default: new Date()
   })
   @Field({ nullable: false })
   public updatedAt: Date;

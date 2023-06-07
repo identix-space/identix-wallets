@@ -13,4 +13,5 @@ import {EverscaleClientService} from "@/libs/everscale-client/services/everscale
   providers: [EverscaleClientProvider, EverscaleClientService],
   exports: [EverscaleClientProvider]
 })
+
 export class EverscaleClientModule {}

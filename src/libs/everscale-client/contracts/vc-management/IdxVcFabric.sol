@@ -1,7 +1,8 @@
-pragma ton-solidity >= 0.58.2;
+pragma ton-solidity >= 0.58.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
+import "../libraries/Errors.sol";
 import "IdxVc_type1.sol";
 
 contract Issuer 
@@ -11,19 +12,26 @@ contract Issuer
     uint256 private _idxControllerPubKey;
     uint16 public codeVer;
 
-    constructor(TvmCell vcBaseImage) public externalMsg
+    constructor() public
     {
+        require(msg.pubkey() != 0, 200);
         require(msg.pubkey() != 0, Errors.AddressOrPubKeyIsNull);
         tvm.accept();
-        _vcBaseImage = vcBaseImage;
         _idxControllerPubKey = msg.pubkey();
-        codeVer = 0x0010;
+        codeVer = 0x0012;
+    }
+
+    function setVcBaseImage(TvmCell vcBaseImage)
+        public externalMsg checkAccessAndAccept
+    {
+        _vcBaseImage = vcBaseImage;
     }
    
     function issueVc(ClaimGroup[] claims, uint256 issuerPubKey) 
         public externalMsg view responsible
         returns (address vcAddress)
     {
+        require(isController(msg.pubkey()), Errors.MessageSenderIsNotController);
         require(claims.length > 0, Errors.InvalidArgument);
         tvm.accept();
         // for (uint i = 0; i < claims.length; ++i) 
@@ -43,7 +51,8 @@ contract Issuer
                 issuerPubKey: issuerPubKey
             }
         });
-        vcAddress = new IdxVc_type1{value: 0.1 ever, bounce: true, stateInit: state}();
+        // 0.015 is enough for everscale se/dev
+        vcAddress = new IdxVc_type1{value: 0.02 ever, bounce: true, stateInit: state}();
     }
 
     ///// Upgrade //////
@@ -76,8 +85,21 @@ contract Issuer
     ////// Access //////
     modifier checkAccessAndAccept() 
     {
-        require(msg.pubkey() == _idxControllerPubKey, Errors.MessageSenderIsNotController);
+        require(isController(msg.pubkey()), Errors.MessageSenderIsNotController);
         tvm.accept();
         _;
+    }
+
+    function isController(uint256 pubkey)
+        private view returns (bool)
+    {
+        return pubkey == _idxControllerPubKey;
+    }
+
+    ////// General //////
+    function transfer(address dest, uint128 value, bool bounce)
+        public pure checkAccessAndAccept
+    {
+        dest.transfer(value, bounce, 0);
     }
 }

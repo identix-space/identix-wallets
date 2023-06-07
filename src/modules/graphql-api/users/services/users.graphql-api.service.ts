@@ -2,12 +2,13 @@ import {BadRequestException, Inject, Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import {DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity} from "@/libs/database/entities";
-import {TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-api/users/types";
+import { DidsEntity, UsersEntity, Web2AccountsEntity, Web3AccountsEntity} from "@/libs/database/entities";
+import { TAccountGetOrCreate, TGetOrCreateAccountResult} from "@/modules/graphql-api/users/types";
 
-import { faker } from "@faker-js/faker";
-import {Blockchains} from "@/libs/database/types/web3.types";
-import {IEverscaleClient, EverscaleClient} from "@/libs/everscale-client/types";
+import { Blockchains } from "@/libs/database/types/web3.types";
+import { IEverscaleClient, EverscaleClient } from "@/libs/everscale-client/types";
+import { randomString } from "@/libs/common/helpers/random.helpers";
+import { LoggingService } from "@/libs//logging/services/logging.service";
 
 @Injectable()
 export class UsersGraphqlApiService {
@@ -20,7 +21,8 @@ export class UsersGraphqlApiService {
     private web3AccountsRepository: Repository<Web3AccountsEntity>,
     @InjectRepository(DidsEntity)
     private didsRepository: Repository<DidsEntity>,
-    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient
+    @Inject(EverscaleClient) private everscaleClient: IEverscaleClient,
+    private logger: LoggingService,
   ) {}
 
   async getOrCreateAccount(params: TAccountGetOrCreate): Promise<TGetOrCreateAccountResult> {
@@ -83,6 +85,20 @@ export class UsersGraphqlApiService {
     return { dids: [didEntity.did] };
   }
 
+  async deleteAccountByDid(accountDid: string): Promise<boolean> {
+    const didEntry = await this.didsRepository.findOne(
+      {
+        where: { did: accountDid },
+        relations: ['web3Account', 'web3Account.user']
+      });
+
+    if (!didEntry) {
+      throw new BadRequestException(`Account not found`);
+    }
+
+    return await this.deleteById(didEntry.web3Account.user.id);  
+  }
+
   async findById(id: number): Promise<UsersEntity> {
     return this.usersRepository.findOne(id);
   }
@@ -139,9 +155,24 @@ export class UsersGraphqlApiService {
    * @param publicKey
    * @private
    */
-  private async createDid(publicKey: string): Promise<string> {
-    return this.everscaleClient.issueDidDocument(publicKey);
+  async createDid(publicKey: string): Promise<string> {
+    let did = `did:identix:${randomString(64)}`;
+
+    try {
+      const everscaleDidAddress = await this.everscaleClient.issueDidDocument(publicKey);
+      if (!everscaleDidAddress) {
+        this.logger.log('Fail to issue new Did');
+      }
+
+      did = `did:venomid:${everscaleDidAddress}`;
+    } catch (e) {
+      this.logger.log(`Fail to issue new Did. Error: ${e.message}`);
+      return e;
+    }
+
+    return did;
   }
+
 
   /**
    * Creates User, Web2Account (if web2 params exist), Web3Account and DidEntity
