@@ -38,7 +38,7 @@ export class VcStorageGraphqlApiService {
 
       return this.everscaleClient.issueVC(claimsGroups, did.web3Account.publicKey);
     } catch (e) {
-      throw new BadRequestException(`Could not issue VC to Venom: ${e.message}`);
+      throw new BadRequestException(`Cannot issue VC to Venom: ${e.message}`);
     }
   }
 
